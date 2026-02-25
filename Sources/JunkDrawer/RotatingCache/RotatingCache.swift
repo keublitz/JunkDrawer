@@ -51,7 +51,7 @@ public struct RotatingCache<Key: Hashable, Value> {
     /// The action to perform when a key-value pair is rotated out.
     private let onDelete: ((Key) -> Void)?
     
-    public init(capacity: Int = 100, onDelete: ((Key) -> Void)? = nil) {
+    public init(capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
         self.capacity = max(1, capacity)
         self.onDelete = onDelete
     }
