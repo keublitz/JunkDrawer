@@ -1,19 +1,4 @@
-// A node to use in a doubly linked list.
-private final class DLLNode<Key: Hashable, Value>: Equatable {
-    let key: Key
-    var value: Value
-    var prev: DLLNode<Key, Value>?
-    var next: DLLNode<Key, Value>?
-    
-    init(key: Key, value: Value) {
-        self.key = key
-        self.value = value
-    }
-    
-    static func == (lhs: DLLNode<Key, Value>, rhs: DLLNode<Key, Value>) -> Bool {
-        return lhs.key == rhs.key
-    }
-}
+import Foundation
 
 /// A cache that deallocates it's least-called objects past a certain capacity.
 ///
@@ -67,7 +52,7 @@ private final class DLLNode<Key: Hashable, Value>: Equatable {
 /// print(itemCache.first!.key) // Returns value of "Item_2"
 /// print(itemCache.count) // Returns "512"
 /// ```
-public final class DecayingCache<Key: Hashable, Value> {
+public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     // MARK: - Properties
     
     private typealias Node = DLLNode<Key, Value>
@@ -78,13 +63,16 @@ public final class DecayingCache<Key: Hashable, Value> {
     private var head: Node? // Most recently used.
     private var tail: Node? // Least recently used.
     
+    public let id: String
+    
     /// The maximum capacity of key-value pairs the cache will store before rotating.
     private let capacity: Int
     
     /// The action to perform when a key-value pair is rotated out.
     private var onDelete: ((Key) -> Void)?
     
-    public init(capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
+    public init(id: String = "default", capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
+        self.id = "DecayingCache.\(id)"
         self.capacity = max(1, capacity)
         self.onDelete = onDelete
     }
@@ -260,3 +248,22 @@ public extension DecayingCache {
 
 /// A cache where objects that do not spark joy—or rather, get called the least—are automatically deallocated past a certain capacity.
 public typealias KonmariCache<Key: Hashable, Value> = DecayingCache<Key, Value>
+
+// MARK: - Private classes
+
+// A node to use in a doubly linked list.
+private final class DLLNode<Key: Hashable, Value>: Equatable {
+    let key: Key
+    var value: Value
+    var prev: DLLNode<Key, Value>?
+    var next: DLLNode<Key, Value>?
+    
+    init(key: Key, value: Value) {
+        self.key = key
+        self.value = value
+    }
+    
+    static func == (lhs: DLLNode<Key, Value>, rhs: DLLNode<Key, Value>) -> Bool {
+        return lhs.key == rhs.key
+    }
+}

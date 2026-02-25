@@ -1,3 +1,5 @@
+import Foundation
+
 /// A cache dictionary that rotates out elements when a defined capacity is reached.
 ///
 /// ## Parameters
@@ -40,11 +42,13 @@
 /// print(itemCache.keys.first!) // Returns "Item_2"
 /// print(itemCache.count) // Returns "250"
 /// ```
-public struct RotatingCache<Key: Hashable, Value> {
+public struct RotatingCache<Key: Hashable, Value>: Identifiable {
     // MARK: - Properties
     
     private var dict: [Key: Value] = [:]
     private var order: [Key] = []
+    
+    public let id: String
     
     /// The maximum capacity of key-value pairs the cache will store before rotating.
     private let capacity: Int
@@ -52,7 +56,8 @@ public struct RotatingCache<Key: Hashable, Value> {
     /// The action to perform when a key-value pair is rotated out.
     private let onDelete: ((Key) -> Void)?
     
-    public init(capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
+    public init(id: String = "default", capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
+        self.id = "RotatingCache.\(id)"
         self.capacity = max(1, capacity)
         self.onDelete = onDelete
     }
