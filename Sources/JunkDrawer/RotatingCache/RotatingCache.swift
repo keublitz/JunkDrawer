@@ -92,6 +92,26 @@ public struct RotatingCache<Key: Hashable, Value> {
     public var count: Int {
         return dict.count
     }
+    
+    /// A collection containing just the keys of the dictionary.
+    ///
+    /// > NOTE: This array is ordered from most-to-least recently added.
+    public var keys: [Key] { order.reversed() }
+    
+    /// A collection containing just the values of the dictionary.
+    ///
+    /// > NOTE: This array is ordered from most-to-least recently added.
+    public var values: [Value] {
+        var arr: [Value] = []
+        
+        for key in order {
+            if let val = dict[key] {
+                arr.append(val)
+            }
+        }
+        
+        return arr.reversed()
+    }
 }
 
 // MARK: - Empty initializer
