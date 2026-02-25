@@ -69,10 +69,9 @@ public struct RotatingCache<Key: Hashable, Value> {
                     order.append(key)
                     
                     if order.count > capacity {
-                        // Before altering cache, erform deletion action (if it exists).
-                        onDelete?(key)
-                        
                         let evictedKey = order.removeFirst()
+                        // Perform onDelete action with key before totally erasing from cache.
+                        onDelete?(evictedKey)
                         dict[evictedKey] = nil
                     }
                 }

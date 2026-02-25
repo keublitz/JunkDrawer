@@ -117,8 +117,8 @@ public final class DecayingCache<Key: Hashable, Value> {
                     
                     // If over capacity, evict the tail end of the dictionary.
                     if dict.count > capacity, let leastUsed = tail {
-                        // Run any onDelete action before touching dictionary.
-                        onDelete?(key)
+                        // Perform onDelete action with key before totally erasing from cache.
+                        onDelete?(leastUsed.key)
                         
                         removeNode(leastUsed)
                         dict.removeValue(forKey: leastUsed.key)
