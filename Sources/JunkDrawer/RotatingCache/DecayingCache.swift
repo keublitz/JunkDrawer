@@ -258,9 +258,8 @@ public final class DecayingCache<Key: Hashable, Value> {
 // MARK: - Empty initializer
 
 public extension DecayingCache {
-    static var empty: Self {
-        .init(capacity: 1)
-    }
+    /// An empty cache.
+    static var empty: Self { .init() }
 }
 
 // MARK: - Miscellaneous

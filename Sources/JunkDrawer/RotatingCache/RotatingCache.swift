@@ -98,7 +98,6 @@ public struct RotatingCache<Key: Hashable, Value> {
 // MARK: - Empty initializer
 
 public extension RotatingCache {
-    static var empty: Self {
-        .init(capacity: 1)
-    }
+    /// An empty cache.
+    static var empty: Self { .init() }
 }
