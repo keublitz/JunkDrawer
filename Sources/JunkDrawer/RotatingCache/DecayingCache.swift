@@ -163,6 +163,8 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     ///   dictionary.
     public func removeAll(keepingCapacity: Bool = false) {
         dict.removeAll(keepingCapacity: keepingCapacity)
+        head = nil
+        tail = nil
     }
     
     // MARK: - Helpers (node logic)
