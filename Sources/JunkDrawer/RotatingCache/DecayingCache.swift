@@ -165,6 +165,19 @@ public final class DecayingCache<Key: Hashable, Value> {
         return result
     }
     
+    /// Removes all key-value pairs from the dictionary.
+    ///
+    /// Calling this method invalidates all indices with respect to the
+    /// dictionary.
+    ///
+    /// - Parameter keepingCapacity: Whether the dictionary should keep its underlying buffer. If you pass `true`, the operation preserves the buffer capacity that the collection has, otherwise the underlying buffer is released. The default is `false`.
+    ///
+    /// - Complexity: O(*n*), where *n* is the number of key-value pairs in the
+    ///   dictionary.
+    public func removeAll(keepingCapacity: Bool = false) {
+        dict.removeAll(keepingCapacity: keepingCapacity)
+    }
+    
     // MARK: - Helpers (node logic)
     
     private func addToHead(_ node: Node) {
