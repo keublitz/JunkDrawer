@@ -2,11 +2,9 @@ import Foundation
 
 /// A cache that deallocates it's least-called objects past a certain capacity.
 ///
-/// ## Parameters
-/// - `capacity`: The maximum capacity of objects the cache will store before objects decay. Defaults to 512.
-/// - `onDelete`: The action to perform when a key-value pair decays.
+/// - Parameter capacity: The maximum capacity of objects the cache will store before objects decay. Defaults to 512.
+/// - Parameter onDelete: The action to perform when a key-value pair decays.
 ///
-/// ## Discussion
 /// This rolling dictionary allows cached objects to automatically "decay" by keeping a ranking of most-to-least recently called and
 /// deallocating those at the bottom after a defined capacity is exceeded.
 ///
@@ -36,6 +34,7 @@ import Foundation
 /// be the one that starts the rotation.
 ///
 /// For the sake of this example, `itemCache["Item_1"]` is the least used item.
+///
 /// ```swift
 /// var itemCache = DecayingCache<String, Item>()
 ///
@@ -129,7 +128,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     
     /// A collection containing just the keys of the dictionary.
     ///
-    /// > NOTE: This array is ordered from most-to-least recently called.
+    /// - Note: This array is ordered from most-to-least recently called.
     public var keys: [Key] {
         var result: [Key] = []
         var current = head
@@ -142,7 +141,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     
     /// A collection containing just the values of the dictionary.
     ///
-    /// > NOTE: This array is ordered from most-to-least recently called.
+    /// - Note: This array is ordered from most-to-least recently called.
     public var values: [Value] {
         var result: [Value] = []
         var current = head
@@ -237,14 +236,14 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     }
 }
 
-// MARK: - Empty initializer
+// MARK: - Extensions
 
 public extension DecayingCache {
     /// An empty cache.
     static var empty: Self { .init() }
 }
 
-// MARK: - Typealias
+// MARK: - Typealiases
 
 /// A cache where objects that do not spark joy—or rather, get called the least—are automatically deallocated past a certain capacity.
 public typealias KonmariCache<Key: Hashable, Value> = DecayingCache<Key, Value>

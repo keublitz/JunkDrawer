@@ -120,7 +120,7 @@ public struct RotatingCache<Key: Hashable, Value>: Identifiable {
     }
 }
 
-// MARK: - Empty initializer
+// MARK: - Extensions
 
 public extension RotatingCache {
     /// An empty cache.
