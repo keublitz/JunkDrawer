@@ -138,19 +138,10 @@ public final class DecayingCache<Key: Hashable, Value> {
     /// The current amount of objects in the cache.
     public var count: Int { dict.count }
     
-    /// The values of the current cache rotation, ranked from most to least recently called.
-    public var currentValues: [Value] {
-        var result: [Value] = []
-        var current = head
-        while let node = current {
-            result.append(node.value)
-            current = node.next
-        }
-        return result
-    }
-    
-    /// The keys of the current cache rotation, ranked from most to least recently called.
-    public var currentKeys: [Key] {
+    /// A collection containing just the keys of the dictionary.
+    ///
+    /// > NOTE: This array is ordered from most-to-least recently called.
+    public var keys: [Key] {
         var result: [Key] = []
         var current = head
         while let node = current {
@@ -160,28 +151,17 @@ public final class DecayingCache<Key: Hashable, Value> {
         return result
     }
     
-    /// A string representing the current order of a dictionary element.
+    /// A collection containing just the values of the dictionary.
     ///
-    /// ## Paramaters
-    /// - `of`: The dictionary element.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let cache: DecayingCache<Int, String>
-    ///
-    /// print(cache.viewCurrentOrder(of: .keys))
-    /// // Returns "[1, 2, 3]"
-    ///
-    /// print(cache.viewCurrentOrder(of: .values))
-    /// // Returns "["a", "b", "c"]"
-    /// ```
-    public func viewCurrentOrder(of element: DictionaryElement) -> String {
-        switch element {
-        case .keys:
-            return currentKeys.debugDescription
-        case .values:
-            return currentValues.debugDescription
+    /// > NOTE: This array is ordered from most-to-least recently called.
+    public var values: [Value] {
+        var result: [Value] = []
+        var current = head
+        while let node = current {
+            result.append(node.value)
+            current = node.next
         }
+        return result
     }
     
     // MARK: - Helpers (node logic)
