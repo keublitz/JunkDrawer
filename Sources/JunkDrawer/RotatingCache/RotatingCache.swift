@@ -94,3 +94,11 @@ public struct RotatingCache<Key: Hashable, Value> {
         return dict.count
     }
 }
+
+// MARK: - Empty initializer
+
+public extension RotatingCache {
+    static var empty: Self {
+        .init(capacity: 1)
+    }
+}

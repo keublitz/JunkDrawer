@@ -255,6 +255,16 @@ public final class DecayingCache<Key: Hashable, Value> {
     }
 }
 
+// MARK: - Empty initializer
+
+public extension DecayingCache {
+    static var empty: Self {
+        .init(capacity: 1)
+    }
+}
+
+// MARK: - Miscellaneous
+
 /// The elements of a dictionary.
 public enum DictionaryElement {
     /// The dictionary's keys.
