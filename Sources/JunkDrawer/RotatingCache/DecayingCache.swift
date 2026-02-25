@@ -33,14 +33,13 @@ private final class DLLNode<Key: Hashable, Value>: Equatable {
 /// cached photo, the key-value pair will be sent to the top-ranked placement in the cache order. Once the amount of images cached exceed
 /// the total capacity of the images the cache can carry, the least viewed image will deallocate.
 ///
-/// The `onDelete` closure can be used to call functions at deallocation, allowing changes to variables such as internal timers and
-/// counters or references to data filesizes.
+/// The `onDelete` closure can be used to call functions at deallocation, allowing synchronous changes to variables such as internal timers
+/// and counters or references to data filesizes.
 ///
 /// ```swift
 /// var itemsDeleted: Int = 0
 ///
-/// let itemCache = RotatingCache<String, Item>(
-///     capacity: 250,
+/// let itemCache = DecayingCache<String, Item>(
 ///     onDelete: {
 ///         itemsDeleted += 1
 ///         print("Item deleted.")
@@ -48,10 +47,10 @@ private final class DLLNode<Key: Hashable, Value>: Equatable {
 /// )
 /// ```
 ///
-/// Keep in mind that key-value pairs will only be evicted *after* the capacity is exceeded. In the event of `itemCache`, the 251st pair will
+/// Keep in mind that key-value pairs will only decay *after* the capacity is exceeded. In the event of `itemCache`, the 513th pair will
 /// be the one that starts the rotation.
 ///
-/// For the sake of this example, `itemCache["Item_1"]` is the least-used item.
+/// For the sake of this example, `itemCache["Item_1"]` is the least used item.
 /// ```swift
 /// var itemCache = DecayingCache<String, Item>()
 ///
@@ -90,7 +89,7 @@ public final class DecayingCache<Key: Hashable, Value> {
         self.onDelete = onDelete
     }
     
-    // MARK: - Dictionary logic
+    // MARK: - Dictionary interface
     
     public subscript(key: Key) -> Value? {
         get {
@@ -134,6 +133,8 @@ public final class DecayingCache<Key: Hashable, Value> {
             }
         }
     }
+    
+    // MARK: - Helpers (dictionary functions)
     
     /// The current amount of objects in the cache.
     public var count: Int { dict.count }
@@ -242,7 +243,7 @@ public extension DecayingCache {
     static var empty: Self { .init() }
 }
 
-// MARK: - Miscellaneous
+// MARK: - Typealias
 
 /// A cache where objects that do not spark joy—or rather, get called the least—are automatically deallocated past a certain capacity.
 public typealias KonmariCache<Key: Hashable, Value> = DecayingCache<Key, Value>

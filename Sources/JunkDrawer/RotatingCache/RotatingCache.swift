@@ -1,15 +1,15 @@
 /// A cache dictionary that rotates out elements when a defined capacity is reached.
 ///
 /// ## Parameters
-/// - `capacity`: The maximum capacity of items the cache will store before rotating items out. Defaults to 100.
+/// - `capacity`: The maximum capacity of items the cache will store before rotating items out. Defaults to 512.
 /// - `onDelete`: The action to perform when a key-value pair is rotated out.
 ///
 /// ## Discussion
 /// There's no priority of elements to keep other than how recently they were added to the cache. For persistent ranked caching based on
 /// how recently the element was called/referenced, see ``DecayingCache``.
 ///
-/// The `onDelete` closure helps keep any variables related to the cache in sync, allowing changes to internal timers, counters, or
-/// immediate memory caches.
+/// The `onDelete` closure can be used to call functions at deallocation, allowing synchronous changes to variables such as internal timers
+/// and counters or references to data filesizes.
 ///
 /// ```swift
 /// var itemsDeleted: Int = 0
@@ -36,8 +36,9 @@
 ///
 /// itemCache["Item_251"] = .init() // Now exceeding capacity
 ///
-/// print(itemCache.count) // Returns "250" [rotation already occurred]
 /// print(itemCache["Item_1"]) // Returns nil
+/// print(itemCache.keys.first!) // Returns "Item_2"
+/// print(itemCache.count) // Returns "250"
 /// ```
 public struct RotatingCache<Key: Hashable, Value> {
     // MARK: - Properties
