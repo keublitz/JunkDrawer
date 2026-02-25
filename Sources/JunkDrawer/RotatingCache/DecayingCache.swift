@@ -244,13 +244,5 @@ public extension DecayingCache {
 
 // MARK: - Miscellaneous
 
-/// The elements of a dictionary.
-public enum DictionaryElement {
-    /// The dictionary's keys.
-    case keys
-    /// The dictionary's values.
-    case values
-}
-
 /// A cache where objects that do not spark joy—or rather, get called the least—are automatically deallocated past a certain capacity.
 public typealias KonmariCache<Key: Hashable, Value> = DecayingCache<Key, Value>
