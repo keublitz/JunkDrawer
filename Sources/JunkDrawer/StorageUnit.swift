@@ -52,7 +52,7 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     /// Saves data to the unit.
     ///
     /// - Parameter data: The data to encode and save.
-    public func save(_ data: inout Storage) throws {
+    public func save(_ data: Storage) throws {
         switch key {
         case let key as URL: try save(data as Storage, toURL: key)
         case let key as String: try save(data as Storage, toUserDefaultsKey: key)
