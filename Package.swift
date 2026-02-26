@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "JunkDrawer",
     platforms: [
-        .iOS(.v12),
+        .iOS(.v16),
         .macOS(.v10_13),
     ],
     products: [
