@@ -126,7 +126,13 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 ///
 /// ## Example
 /// ```swift
-/// let itemKey = StorageUnitKey("itemKey", Item.self)
+/// let itemKey = StorageKey("itemKey", Item.self)
+/// let itemUnit = StorageUnit(itemKey)
+/// ```
+///
+/// With explicit type, the second part of the initializer can be dropped.
+/// ```swift
+/// var itemKey: StorageKey<Item> = StorageKey("itemKey")
 /// ```
 public struct StorageKey<Storage: Codable>: Identifiable, Equatable {
     public var id: String { value.asString }
@@ -151,6 +157,7 @@ public struct StorageKey<Storage: Codable>: Identifiable, Equatable {
 
 /// The key for getting and setting data within a `StorageUnit`.
 public protocol StorageKeyValue {
+    /// Returns the key value as a String.
     var asString: String { get }
 }
 
