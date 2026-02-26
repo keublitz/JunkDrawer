@@ -131,8 +131,8 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 public struct StorageKey<Storage: Codable>: Identifiable {
     public var id: String { value.asString }
     
-    let value: StorageKeyValue
-    let inputType: Storage.Type
+    fileprivate let value: StorageKeyValue
+    fileprivate let inputType: Storage.Type
     
     public init(_ value: StorageKeyValue, _ inputType: Storage.Type) {
         self.value = value
