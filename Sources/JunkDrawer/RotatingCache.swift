@@ -42,7 +42,7 @@ import Foundation
 /// print(itemCache.keys.first!) // Returns "Item_2"
 /// print(itemCache.count) // Returns "250"
 /// ```
-public struct RotatingCache<Key: Hashable, Value>: Identifiable {
+public final class RotatingCache<Key: Hashable, Value>: Identifiable {
     // MARK: - Properties
     
     private var dict: [Key: Value] = [:]
@@ -128,7 +128,7 @@ public struct RotatingCache<Key: Hashable, Value>: Identifiable {
     ///
     /// - Complexity: O(*n*), where *n* is the number of key-value pairs in the
     ///   dictionary.
-    public mutating func removeAll(keepingCapacity: Bool = false) {
+    public func removeAll(keepingCapacity: Bool = false) {
         dict.removeAll(keepingCapacity: keepingCapacity)
     }
 }
