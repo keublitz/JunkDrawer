@@ -101,12 +101,12 @@ public final class RotatingCache<Key: Hashable, Value>: Identifiable {
     
     /// A collection containing just the keys of the dictionary.
     ///
-    /// > NOTE: This array is ordered from most-to-least recently added.
+    /// - Note: This array is ordered from most-to-least recently added.
     public var keys: [Key] { order.reversed() }
     
     /// A collection containing just the values of the dictionary.
     ///
-    /// > NOTE: This array is ordered from most-to-least recently added.
+    /// - Note: This array is ordered from most-to-least recently added.
     public var values: [Value] {
         var arr: [Value] = []
         

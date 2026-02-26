@@ -16,7 +16,7 @@ import SwiftUI
 ///
 /// ```swift
 /// var items: [Item] = // ...
-/// try unit.save(&items)
+/// try unit.save(items)
 /// ```
 ///
 /// Loading is even easier—just call the `.load()` function.
