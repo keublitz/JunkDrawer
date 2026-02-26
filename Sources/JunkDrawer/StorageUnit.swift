@@ -128,7 +128,7 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 /// ```swift
 /// let itemKey = StorageUnitKey("itemKey", Item.self)
 /// ```
-public struct StorageKey<Storage: Codable>: Identifiable {
+public struct StorageKey<Storage: Codable>: Identifiable, Equatable {
     public var id: String { value.asString }
     
     fileprivate let value: StorageKeyValue
@@ -142,6 +142,10 @@ public struct StorageKey<Storage: Codable>: Identifiable {
     public init(_ value: StorageKeyValue) {
         self.value = value
         self.inputType = Storage.self
+    }
+    
+    public static func == (lhs: StorageKey<Storage>, rhs: StorageKey<Storage>) -> Bool {
+        return lhs.id == rhs.id
     }
 }
 
