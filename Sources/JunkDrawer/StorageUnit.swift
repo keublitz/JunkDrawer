@@ -159,15 +159,20 @@ public struct StorageKey<Storage: Codable>: Identifiable, Equatable {
 public protocol StorageKeyValue {
     /// Returns the key value as a String.
     var asString: String { get }
+    
+    /// Returns the key value as a URL.
+    var asURL: URL? { get }
 }
 
 extension String: StorageKeyValue {
     /// Returns a
     public var asString: String { self }
+    public var asURL: URL? { URL(string: self) }
 }
 
 extension URL: StorageKeyValue {
     public var asString: String { self.absoluteString }
+    public var asURL: URL? { self }
 }
 
 fileprivate enum StorageUnitError: Error, LocalizedError {
