@@ -168,11 +168,31 @@ extension String: StorageKeyValue {
     /// Returns a
     public var asString: String { self }
     public var asURL: URL? { URL(string: self) }
+    
+    /// Creates a key from the given String.
+    public func key<T: Codable>() -> StorageKey<T> {
+        StorageKey(self, T.self)
+    }
+    
+    /// Creates a key from the given String.
+    public func key<T: Codable>(_: T.Type) -> StorageKey<T> {
+        StorageKey(self, T.self)
+    }
 }
 
 extension URL: StorageKeyValue {
     public var asString: String { self.absoluteString }
     public var asURL: URL? { self }
+    
+    /// Creates a key from the given URL.
+    public func key<T: Codable>() -> StorageKey<T> {
+        StorageKey(self, T.self)
+    }
+    
+    /// Creates a key from the given URL.
+    public func key<T: Codable>(_: T.Type) -> StorageKey<T> {
+        StorageKey(self, T.self)
+    }
 }
 
 fileprivate enum StorageUnitError: Error, LocalizedError {
