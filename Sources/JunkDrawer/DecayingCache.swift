@@ -70,6 +70,8 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     /// The action to perform when a key-value pair is rotated out.
     private var onDelete: ((Key) -> Void)?
     
+    // MARK: - Initializer
+    
     public init(id: String = "default", capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
         self.id = "DecayingCache.\(id)"
         self.capacity = max(1, capacity)

@@ -2,11 +2,9 @@ import Foundation
 
 /// A cache dictionary that rotates out elements when a defined capacity is reached.
 ///
-/// ## Parameters
-/// - `capacity`: The maximum capacity of items the cache will store before rotating items out. Defaults to 512.
-/// - `onDelete`: The action to perform when a key-value pair is rotated out.
+/// - Parameter capacity: The maximum capacity of items the cache will store before rotating items out. Defaults to 512.
+/// - Parameter onDelete: The action to perform when a key-value pair is rotated out.
 ///
-/// ## Discussion
 /// There's no priority of elements to keep other than how recently they were added to the cache. For persistent ranked caching based on
 /// how recently the element was called/referenced, see ``DecayingCache``.
 ///
@@ -55,6 +53,8 @@ public final class RotatingCache<Key: Hashable, Value>: Identifiable {
     
     /// The action to perform when a key-value pair is rotated out.
     private let onDelete: ((Key) -> Void)?
+    
+    // MARK: - Initializer
     
     public init(id: String = "default", capacity: Int = 512, onDelete: ((Key) -> Void)? = nil) {
         self.id = "RotatingCache.\(id)"
