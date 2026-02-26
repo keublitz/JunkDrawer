@@ -54,8 +54,8 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     /// - Parameter data: The data to encode and save.
     public func save(_ data: inout Storage) throws {
         switch key {
-        case let key as URL: try save(data, toURL: key)
-        case let key as String: try save(data, toUserDefaultsKey: key)
+        case let key as URL: try save(data as Storage, toURL: key)
+        case let key as String: try save(data as Storage, toUserDefaultsKey: key)
         default: throw StorageUnitError.noKeyDefined
         }
     }
@@ -67,9 +67,9 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     }
     
     // Encodes and saves data to a UserDefaults key.
-    private func save(_ data: Storage, toUserDefaultsKey userDefaultsKey: String) throws {
+    private func save(_ data: Storage, toUserDefaultsKey key: String) throws {
         let encoded = try JSONEncoder().encode(data)
-        UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
+        UserDefaults.standard.set(encoded, forKey: key)
     }
     
     /// Returns data from the unit.
