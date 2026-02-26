@@ -134,9 +134,14 @@ public struct StorageKey<Storage: Codable>: Identifiable {
     let value: StorageKeyValue
     let inputType: Storage.Type
     
-    public init(_ keyValue: StorageKeyValue, _ inputValue: Storage.Type) {
-        self.value = keyValue
-        self.inputType = inputValue
+    public init(_ value: StorageKeyValue, _ inputType: Storage.Type) {
+        self.value = value
+        self.inputType = inputType
+    }
+    
+    public init(_ value: StorageKeyValue) {
+        self.value = value
+        self.inputType = Storage.self
     }
 }
 
