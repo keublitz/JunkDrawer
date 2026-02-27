@@ -133,7 +133,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     
     /// A collection containing just the keys of the dictionary.
     ///
-    /// - Note: This array is ordered from most-to-least recently called.
+    /// - Returns: The keys of the dictionary, sorted by most-to-least recently called.
     public var keys: [Key] {
         var result: [Key] = []
         var current = head
@@ -146,7 +146,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     
     /// A collection containing just the values of the dictionary.
     ///
-    /// - Note: This array is ordered from most-to-least recently called.
+    /// - Returns: The values of the dictionary, sorted by most-to-least recently called.
     public var values: [Value] {
         var result: [Value] = []
         var current = head
