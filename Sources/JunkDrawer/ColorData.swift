@@ -1,4 +1,5 @@
 import SwiftUI
+import Dialogue
 
 /// A codable structure that can hold color data.
 ///
