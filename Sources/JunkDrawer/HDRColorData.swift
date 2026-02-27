@@ -3,7 +3,7 @@ import Dialogue
 
 /// A codable structure that can hold HDR color data.
 
-public struct HDRColorData: Codable {
+public struct HDRColorData: Codable, Equatable {
     private let r: Float
     
     private let g: Float
@@ -28,6 +28,10 @@ public struct HDRColorData: Codable {
         )
         
         self.sdr = SDRcolor.data
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.alpha == rhs.alpha
     }
 }
 
