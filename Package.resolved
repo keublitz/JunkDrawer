@@ -1,0 +1,24 @@
+{
+  "originHash" : "fb5e01311cbc200e75fbd55f54006a8cf521ad4f7a2c3d2f91ba19b4781f383f",
+  "pins" : [
+    {
+      "identity" : "colorthiefswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yamoridon/ColorThiefSwift",
+      "state" : {
+        "revision" : "ac04a95acca965f8030a01293c31621b2a812c39",
+        "version" : "0.5.0"
+      }
+    },
+    {
+      "identity" : "dialogue",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/keublitz/Dialogue",
+      "state" : {
+        "revision" : "d7c7e119a5ed15b16fbc16103a2ed91e1dbf98fc",
+        "version" : "0.9.0"
+      }
+    }
+  ],
+  "version" : 3
+}
