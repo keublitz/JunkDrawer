@@ -120,6 +120,26 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     private func load(fromUserDefaultsKey userDefaultsKey: String, into data: inout Storage) throws {
         data = try load(fromUserDefaultsKey: userDefaultsKey)
     }
+    
+    public func clearOut() throws {
+        switch key {
+        case let key as URL: return try clearOut(url: key)
+        case let key as String: return try clearOut(userDefaultsKey: key)
+        default: throw StorageUnitError.noKeyDefined
+        }
+    }
+    
+    private func clearOut(userDefaultsKey: String) throws {
+        guard let _ = UserDefaults.standard.data(forKey: userDefaultsKey) else {
+            throw StorageUnitError.unitIsEmpty(userDefaultsKey)
+        }
+        
+        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
+    }
+    
+    private func clearOut(url: URL) throws {
+        try FileManager.default.removeItem(at: url)
+    }
 }
 
 /// The key to initialize and call a <doc:StorageUnit>.
