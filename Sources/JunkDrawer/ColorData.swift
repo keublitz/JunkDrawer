@@ -41,18 +41,18 @@ public struct ColorData: Codable, Equatable {
     public let hex: String
     
     // The red value of the color, expressed as a decimal out of 1.0.
-    private let r: CGFloat
+    internal let r: Float
     
     // The green value of the color, expressed as a decimal out of 1.0.
-    private let g: CGFloat
+    internal let g: Float
     
     // The blue value of the color, expressed as a decimal out of 1.0.
-    private let b: CGFloat
+    internal let b: Float
     
     // The opacity of the color, expressed as a decimal out of 1.0.
-    private let alpha: CGFloat
+    internal let alpha: Float
     
-    public init(r: CGFloat, g: CGFloat, b: CGFloat, alpha: CGFloat = 1) {
+    public init(r: Float, g: Float, b: Float, alpha: Float = 1) {
         guard r >= 0 && r <= 1,
               g >= 0 && g <= 1,
               b >= 0 && b <= 1,
@@ -135,7 +135,7 @@ extension Color: ShapeStyleColor {
             fatalError("Could not convert color to RGB color space.")
         }
         
-        return ColorData(r: rVal, g: gVal, b: bVal, alpha: aVal)
+        return ColorData(r: Float(rVal), g: Float(gVal), b: Float(bVal), alpha: Float(aVal))
     }
 }
 
@@ -154,6 +154,6 @@ extension UIColor: ShapeStyleColor {
             fatalError("Could not convert color to RGB color space.")
         }
         
-        return ColorData(r: rVal, g: gVal, b: bVal, alpha: aVal)
+        return ColorData(r: Float(rVal), g: Float(gVal), b: Float(bVal), alpha: Float(aVal))
     }
 }
