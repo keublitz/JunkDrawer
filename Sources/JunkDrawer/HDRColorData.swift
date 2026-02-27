@@ -42,7 +42,7 @@ extension HDRColorData {
     }
 }
 
-extension ColorData {
+public extension ColorData {
     /// Returns data of the color converted to HDR by an amount of brightness.
     ///
     /// # Explanation
