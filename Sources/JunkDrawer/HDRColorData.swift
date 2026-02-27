@@ -31,7 +31,7 @@ public struct HDRColorData: Codable {
     }
 }
 
-extension HDRColorData {
+public extension HDRColorData {
     var color: Color? {
         guard let colorSpace = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
               let cgColor = CGColor(colorSpace: colorSpace, components: [CGFloat(self.r), CGFloat(self.g), CGFloat(self.b), CGFloat(self.alpha)]) else {
@@ -42,7 +42,7 @@ extension HDRColorData {
     }
 }
 
-extension ColorData {
+public extension ColorData {
     /// Returns data of the color converted to HDR by an amount of brightness.
     ///
     /// # Explanation
