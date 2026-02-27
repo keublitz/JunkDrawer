@@ -128,6 +128,9 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     /// The current amount of objects in the cache.
     public var count: Int { dict.count }
     
+    /// The amount of empty slots in the cache.
+    public var remainingSlots: Int { capacity - count }
+    
     /// A collection containing just the keys of the dictionary.
     ///
     /// - Note: This array is ordered from most-to-least recently called.

@@ -95,9 +95,10 @@ public final class RotatingCache<Key: Hashable, Value>: Identifiable {
     // MARK: - Helpers
     
     /// The amount of items currently stored in the cache.
-    public var count: Int {
-        return dict.count
-    }
+    public var count: Int { dict.count }
+    
+    /// The amount of empty slots in the cache.
+    public var remainingSlots: Int { capacity - count }
     
     /// A collection containing just the keys of the dictionary.
     ///
