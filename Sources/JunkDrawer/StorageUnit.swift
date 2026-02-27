@@ -3,8 +3,6 @@ import SwiftUI
 
 /// A class that stores, updates, and retrieves data.
 ///
-/// - Parameter key: The key that determines which unit and what kind of data to read and write from.
-///
 /// This class consists of generic save and load helpers, designed to decrease unnecessary verbosity and provide clear, readable direction on how the data is being handled, accessible through a lock-key system. To initialize a `StorageUnit`, create a <doc:StorageKey> by assigning a `UserDefaults` key or `URL` value and category of data to encode/decode, then use it to "unlock" the unit.
 ///
 /// ```swift
@@ -29,6 +27,24 @@ import SwiftUI
 /// ```swift
 /// unit.load(into: &items)
 /// ```
+///
+/// ## Storing as JSON vs Data
+///
+/// Data can be stored as either a JSON dictionary or the raw `Data` type. Storing as raw data can be beneficial for exceptionally large objects, such as raw image data. By default, all data is encoded and decoded as JSON.
+/// ```swift
+/// let image: UIImage
+/// let data = image.jpegData()
+///
+/// let photoLibraryURL: URL
+/// let imageKey = photoLibraryURL.key(Data.self)
+/// let imageUnit = StorageUnit(imageKey)
+///
+/// try? imageUnit.save(data)
+/// var newData = try? imageUnit.load() // Returns as Data?
+/// ```
+///
+/// - Parameter key: The key that determines which unit and what kind of data to read and write from.
+/// - Parameter rawData: A boolean value indicating how to encode/decode the data. When `true`, data will encode/decode as a JSON dictionary. When `false`, data will decode/encode as `Data`. Defaults to `true`.
 public final class StorageUnit<Storage: Codable>: Identifiable {
     // MARK: - Properties
     
@@ -40,11 +56,15 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     // The type of data to encode and decode.
     private let type: Storage.Type
     
+    // TRUE: the data is stored as a JSON dictionary.
+    private let rawData: Bool
+    
     // MARK: - Initializers
     
-    public init(_ key: StorageKey<Storage>) {
+    public init(_ key: StorageKey<Storage>, rawData: Bool = false) {
         self.key = key.value
         self.type = key.inputType
+        self.rawData = rawData
     }
     
     // MARK: - Helpers
@@ -52,18 +72,33 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     /// Saves data to the unit.
     ///
     /// - Parameter data: The data to encode and save.
-    public func save(_ data: Storage) throws {
+    /// - Parameter encodeRawData: A boolean value for encoding into raw `Data`. `true` stores the raw data; `false` stores the data as a JSON dictionary. Defaults to `false`.
+    ///
+    /// - Note: When saving with `UserDefaults` (setting the `StorageKey` value to `String`), data will always encode as JSON.
+    public func save(_ data: Storage, encodeRawData: Bool? = nil) throws {
+        let shouldEncode = encodeRawData ?? self.rawData
+        
         switch key {
-        case let key as URL: try save(data as Storage, toURL: key)
+        case let key as URL: try save(data as Storage, toURL: key, encodeRawData: shouldEncode)
         case let key as String: try save(data as Storage, toUserDefaultsKey: key)
         default: throw StorageUnitError.noKeyDefined
         }
     }
     
     // Encodes and saves data to a URL.
-    private func save(_ data: Storage, toURL url: URL) throws {
-        let encoded = try JSONEncoder().encode(data)
-        try encoded.write(to: url)
+    private func save(_ data: Storage, toURL url: URL, encodeRawData: Bool? = nil) throws {
+        let shouldDecode = encodeRawData ?? self.rawData
+        
+        if shouldDecode {
+            let encoded = try JSONEncoder().encode(data)
+            try encoded.write(to: url)
+        }
+        else {
+            guard let encodable = data as? Data else {
+                throw StorageUnitError.cannotCastToData
+            }
+            try encodable.write(to: url)
+        }
     }
     
     // Encodes and saves data to a UserDefaults key.
@@ -74,10 +109,23 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     /// Returns data from the unit.
     ///
+    /// - Parameter decodeRawData: A boolean value for decoding into raw data. `true` loads the raw data; `false` decodes the data into a JSON dictionary. Defaults to `false`.
     /// - Returns: The `Codable` data previously saved to the unit.
-    public func load() throws -> Storage {
+    public func load(decodeRawData: Bool? = nil) throws -> Storage {
+        let shouldDecode = decodeRawData ?? self.rawData
+        
         switch key {
-        case let key as URL: return try load(fromURL: key)
+        case let key as URL:
+            if shouldDecode {
+                return try load(fromURL: key)
+            }
+            else {
+                guard let data = try Data(contentsOf: key) as? Storage else {
+                    throw StorageUnitError.cannotCastToData
+                }
+                
+                return data
+            }
         case let key as String: return try load(fromUserDefaultsKey: key)
         default: throw StorageUnitError.noKeyDefined
         }
@@ -103,17 +151,25 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     /// Loads data from the unit into an object.
     ///
     /// - Parameter data: The object to load the value into.
-    public func load(into data: inout Storage) throws {
+    /// - Parameter decodeRawData: A boolean value for decoding into raw `Data`. `true` loads the raw data; `false` decodes the data into a JSON dictionary. Defaults to `false`.
+    public func load(into data: inout Storage, decodeRawData: Bool? = nil) throws {
+        let shouldDecode = decodeRawData ?? self.rawData
+        
         switch key {
-        case let key as URL: return try load(fromURL: key, into: &data)
+        case let key as URL:
+            if shouldDecode {
+                data = try load(fromURL: key)
+            }
+            else {
+                guard let storageData = try Data(contentsOf: key) as? Storage else {
+                    throw StorageUnitError.cannotCastToData
+                }
+                
+                data = storageData
+            }
         case let key as String: return try load(fromUserDefaultsKey: key, into: &data)
         default: throw StorageUnitError.noKeyDefined
         }
-    }
-    
-    // Loads data from a URL into an object.
-    private func load(fromURL url: URL, into data: inout Storage) throws {
-        data = try load(fromURL: url)
     }
     
     // Loads data from a UserDefaults key into an object.
@@ -242,11 +298,13 @@ extension URL: StorageKeyValue {
 fileprivate enum StorageUnitError: Error, LocalizedError {
     case noKeyDefined
     case unitIsEmpty(_: String)
+    case cannotCastToData
     
     var errorDescription: String? {
         switch self {
         case .noKeyDefined: return "The key was not defined as either a String or URL. Check that StorageUnit is initialized with a StorageUnitKey value."
         case .unitIsEmpty: return "The unit linked to this key is empty."
+        case .cannotCastToData: return "The given value cannot be cast to type Data."
         }
     }
 }
