@@ -247,6 +247,7 @@ extension String: StorageKeyValue {
     /// ```swift
     /// let cacheKey: StorageKey<[Item]> = "itemsCache".key()
     /// ```
+    @available(*, deprecated, message: "Mark this to replace later with non-explicit version.")
     public func key<T: Codable>() -> StorageKey<T> {
         StorageKey(self, T.self)
     }
@@ -259,6 +260,7 @@ extension String: StorageKeyValue {
     /// ```
     ///
     /// - Parameter type: The type of the value the related unit will store.
+    @available(*, deprecated, message: "Mark this to replace later with non-explicit version.")
     public func key<T: Codable>(_ type: T.Type) -> StorageKey<T> {
         StorageKey(self, type)
     }
@@ -277,6 +279,7 @@ extension URL: StorageKeyValue {
     /// let cacheURL: URL
     /// let cacheKey: StorageKey<[Item]> = cacheURL.key()
     /// ```
+    @available(*, deprecated, message: "Mark this to replace later with non-explicit version.")
     public func key<T: Codable>() -> StorageKey<T> {
         StorageKey(self, T.self)
     }
@@ -290,6 +293,7 @@ extension URL: StorageKeyValue {
     /// ```
     ///
     /// - Parameter type: The type of the value the related unit will store.
+    @available(*, deprecated, message: "Mark this to replace later with non-explicit version.")
     public func key<T: Codable>(_ type: T.Type) -> StorageKey<T> {
         StorageKey(self, type)
     }
