@@ -179,23 +179,19 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 
 /// The key to initialize and call a <doc:StorageUnit>.
 ///
-/// ## Calling Parameters
-/// The default initializer takes in the `String` or `URL` value, and the data type.
+/// All a key needs to be created is the `String` of the UserDefaults key or a `URL` pointing to a directory.
 /// ```swift
-/// let itemCacheKey = StorageKey("itemKey", [Item].self)
-/// ```
-///
-/// The second part of the initializer can be dropped if the key is explicitly typed.
-/// ```swift
-/// var itemCacheKey: StorageKey<[Item]> = StorageKey("itemCache")
+/// let itemCacheKey = StorageKey("itemCache")
+/// // Or...
+/// let itemCacheURL: URL
+/// let itemCacheKey = StorageKey(itemCacheURL)
 /// ```
 ///
 /// With the <doc:Swift/String/key> extension, a key can be created directly from the `String` and/or `URL` element. This extension also supports explicit typing upfront or within the variable.
 /// ```swift
-/// let itemCacheURL: URL
 /// let itemCacheKey: StorageKey = itemCacheURL.key
-///
-/// let itemCacheString: String = "itemCache"
+/// // Or...
+/// let itemCacheString = "itemCache"
 /// var itemCacheKey: StorageKey = itemCacheString.key
 /// ```
 ///
@@ -225,18 +221,10 @@ public protocol StorageKeyValue {
 }
 
 extension String: StorageKeyValue {
-    /// Returns the key value as a `String`.
     public var asString: String { self }
-    
-    /// Returns the key value as a `URL`.
     public var asURL: URL? { URL(string: self) }
     
     /// Creates a key from the given `String`.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let cacheKey: StorageKey = "itemsCache".key()
-    /// ```
     public var key: StorageKey { StorageKey(self) }
 }
 
@@ -245,12 +233,6 @@ extension URL: StorageKeyValue {
     public var asURL: URL? { self }
     
     /// Creates a key from the given `URL`.
-    ///
-    /// ## Example
-    /// ```swift
-    /// let cacheURL: URL
-    /// let cacheKey: StorageKey = cacheURL.key
-    /// ```
     public var key: StorageKey { StorageKey(self) }
 }
 
