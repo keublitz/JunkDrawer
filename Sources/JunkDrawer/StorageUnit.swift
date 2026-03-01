@@ -53,9 +53,6 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     // The String or URL value of the key.
     private var key: StorageKeyValue
     
-    // The type of data to encode and decode.
-    private let type = Storage.self
-    
     // TRUE: the data is stored as a JSON dictionary.
     private let rawData: Bool
     
@@ -133,13 +130,13 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     // Returns data from a URL.
     private func load(fromURL url: URL) throws -> Storage {
         let decoded = try Data(contentsOf: url)
-        return try JSONDecoder().decode(type.self, from: decoded)
+        return try JSONDecoder().decode(Storage.self, from: decoded)
     }
     
     // Returns data from a UserDefaults key.
     private func load(fromUserDefaultsKey userDefaultsKey: String) throws -> Storage {
         if let userDefault = UserDefaults.standard.data(forKey: userDefaultsKey) {
-            let decoded = try JSONDecoder().decode(type.self, from: userDefault)
+            let decoded = try JSONDecoder().decode(Storage.self, from: userDefault)
             return decoded
         }
         else {
