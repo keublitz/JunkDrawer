@@ -3,11 +3,11 @@ import SwiftUI
 
 /// A class that stores, updates, and retrieves data.
 ///
-/// This class consists of generic save and load helpers, designed to decrease unnecessary verbosity and provide clear, readable direction on how the data is being handled, accessible through a lock-key system. To initialize a `StorageUnit`, create a <doc:StorageKey> by assigning a `UserDefaults` key or `URL` value and category of data to encode/decode, then use it to "unlock" the unit.
+/// This class consists of generic save and load helpers, designed to decrease unnecessary verbosity and provide clear, readable direction on how the data is being handled, accessible through a lock-key system. To initialize a `StorageUnit`, create a <doc:StorageKey> by assigning a `UserDefaults` key or `URL` value, then use it to "unlock" the unit.
 ///
 /// ```swift
-/// let key = StorageKey("itemsArrayCache", [Item].self)
-/// let unit = StorageUnit(key)
+/// let key = StorageKey("itemsArrayCache")
+/// let unit = StorageUnit<Codable>(key)
 /// ```
 ///
 /// With the unit established, you can store and load data with sleek and easy helper functions. Saving requires simply the data value in question placed in an inout initializer.
@@ -36,8 +36,8 @@ import SwiftUI
 /// let data = image.jpegData()
 ///
 /// let photoLibraryURL: URL
-/// let imageKey = photoLibraryURL.key(Data.self)
-/// let imageUnit = StorageUnit(imageKey)
+/// let imageKey = photoLibraryURL.key
+/// let imageUnit = StorageUnit<Data>(imageKey, rawData: true)
 ///
 /// try? imageUnit.save(data)
 /// var newData = try? imageUnit.load() // Returns as Data?
@@ -54,16 +54,15 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     private var key: StorageKeyValue
     
     // The type of data to encode and decode.
-    private let type: Storage.Type
+    private let type = Storage.self
     
     // TRUE: the data is stored as a JSON dictionary.
     private let rawData: Bool
     
     // MARK: - Initializers
     
-    public init(_ key: StorageKey<Storage>, rawData: Bool = false) {
+    public init(_ key: StorageKey, rawData: Bool = false) {
         self.key = key.value
-        self.type = key.inputType
         self.rawData = rawData
     }
     
@@ -191,34 +190,27 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 /// var itemCacheKey: StorageKey<[Item]> = StorageKey("itemCache")
 /// ```
 ///
-/// With the <doc:Swift/String/key()> extension, a key can be created directly from the `String` and/or `URL` element. This extension also supports explicit typing upfront or within the variable.
+/// With the <doc:Swift/String/key> extension, a key can be created directly from the `String` and/or `URL` element. This extension also supports explicit typing upfront or within the variable.
 /// ```swift
 /// let itemCacheURL: URL
-/// let itemCacheKey = itemCacheURL.key([Item].self)
+/// let itemCacheKey: StorageKey = itemCacheURL.key
 ///
 /// let itemCacheString: String = "itemCache"
-/// var itemCacheKey: StorageKey<[Item]> = itemCacheString.key()
+/// var itemCacheKey: StorageKey = itemCacheString.key
 /// ```
 ///
 /// - Parameter value: The value of the key, expressible through `String` or `URL`.
 /// - Parameter inputType: The type of data being stored.
-public struct StorageKey<Storage: Codable>: Identifiable, Equatable {
+public struct StorageKey: Identifiable, Equatable {
     public var id: String { value.asString }
     
     fileprivate let value: StorageKeyValue
-    fileprivate let inputType: Storage.Type
-    
-    public init(_ value: StorageKeyValue, _ inputType: Storage.Type) {
-        self.value = value
-        self.inputType = inputType
-    }
     
     public init(_ value: StorageKeyValue) {
         self.value = value
-        self.inputType = Storage.self
     }
     
-    public static func == (lhs: StorageKey<Storage>, rhs: StorageKey<Storage>) -> Bool {
+    public static func == (lhs: StorageKey, rhs: StorageKey) -> Bool {
         return lhs.id == rhs.id
     }
 }
@@ -241,27 +233,11 @@ extension String: StorageKeyValue {
     
     /// Creates a key from the given `String`.
     ///
-    /// ## Explicit Typing
-    /// Value type must be explicitly defined when creating the key.
-    ///
+    /// ## Example
     /// ```swift
-    /// let cacheKey: StorageKey<[Item]> = "itemsCache".key()
+    /// let cacheKey: StorageKey = "itemsCache".key()
     /// ```
-    public func key<T: Codable>() -> StorageKey<T> {
-        StorageKey(self, T.self)
-    }
-    
-    /// Creates a key from the given `String`.
-    ///
-    /// ##
-    /// ```swift
-    /// let itemsCacheKey = "itemsCache".key([Item].self)
-    /// ```
-    ///
-    /// - Parameter type: The type of the value the related unit will store.
-    public func key<T: Codable>(_ type: T.Type) -> StorageKey<T> {
-        StorageKey(self, type)
-    }
+    public var key: StorageKey { StorageKey(self) }
 }
 
 extension URL: StorageKeyValue {
@@ -270,29 +246,12 @@ extension URL: StorageKeyValue {
     
     /// Creates a key from the given `URL`.
     ///
-    /// ## Explicit Typing
-    /// Value type must be explicitly defined when creating the key.
-    ///
+    /// ## Example
     /// ```swift
     /// let cacheURL: URL
-    /// let cacheKey: StorageKey<[Item]> = cacheURL.key()
+    /// let cacheKey: StorageKey = cacheURL.key
     /// ```
-    public func key<T: Codable>() -> StorageKey<T> {
-        StorageKey(self, T.self)
-    }
-    
-    /// Creates a key from the given `URL`.
-    ///
-    /// ##
-    /// ```swift
-    /// let cacheURL: URL
-    /// let cacheKey = cacheURL.key([Items].self)
-    /// ```
-    ///
-    /// - Parameter type: The type of the value the related unit will store.
-    public func key<T: Codable>(_ type: T.Type) -> StorageKey<T> {
-        StorageKey(self, type)
-    }
+    public var key: StorageKey { StorageKey(self) }
 }
 
 fileprivate enum StorageUnitError: Error, LocalizedError {
