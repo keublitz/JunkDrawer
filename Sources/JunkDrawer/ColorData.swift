@@ -69,8 +69,41 @@ public struct ColorData: Codable, Equatable {
         self.alpha = alpha
         
         let uiColor = UIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: CGFloat(alpha))
-        
         self.hex = uiColor.hex
+    }
+    
+    /// - Parameter color: The `Color` to encode as data.
+    public init(_ color: Color) {
+        let data = color.data
+        
+        guard data.valuesAreValid else {
+            fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
+        }
+        
+        self.r = data.r
+        self.g = data.g
+        self.b = data.b
+        self.alpha = data.alpha
+        
+        let uiColor = UIColor(red: CGFloat(data.r), green: CGFloat(data.g), blue: CGFloat(data.b), alpha: CGFloat(data.alpha))
+        self.hex = uiColor.hex
+    }
+    
+    /// - Parameter uiColor: The `UIColor` to encode as data.
+    public init(uiColor: UIColor) {
+        let data = uiColor.data
+        
+        guard data.valuesAreValid else {
+            fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
+        }
+        
+        self.r = data.r
+        self.g = data.g
+        self.b = data.b
+        self.alpha = data.alpha
+        
+        let uiColorSet = UIColor(red: CGFloat(data.r), green: CGFloat(data.g), blue: CGFloat(data.b), alpha: CGFloat(data.alpha))
+        self.hex = uiColorSet.hex
     }
     
     public static func == (lhs: ColorData, rhs: ColorData) -> Bool {
@@ -79,6 +112,14 @@ public struct ColorData: Codable, Equatable {
         let valuesMatch: Bool = lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.alpha == rhs.alpha
         
         return hexesMatch && valuesMatch
+    }
+    
+    // Checks that all color values will not overflow.
+    private var valuesAreValid: Bool {
+        self.r >= 0 && self.r <= 1 &&
+        self.g >= 0 && self.g <= 1 &&
+        self.b >= 0 && self.b <= 1 &&
+        self.alpha >= 0 && self.alpha <= 1
     }
 }
 
