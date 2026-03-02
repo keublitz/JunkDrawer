@@ -179,6 +179,9 @@ print(itemCache.count) // Returns "250"
 - `values`: A collection containing just the values of the dictionary, sorted by most-to-least recently added.
 - `removeAll()`: Removes all key-value pairs from the cache.
 
+> [!NOTE]
+> When calling `keys` and/or `values` they will maintain the order of most-to-least recently added.
+
 ## StorageUnit
 
 A class that stores, updates, and retrieves data.
