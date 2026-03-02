@@ -2,22 +2,23 @@ import Foundation
 
 /// A cache that deallocates it's least-called objects past a certain capacity.
 ///
-/// - Parameter capacity: The maximum capacity of objects the cache will store before objects decay. Defaults to 512.
-/// - Parameter onDelete: The action to perform when a key-value pair decays.
-///
-/// This rolling dictionary allows cached objects to automatically "decay" by keeping a ranking of most-to-least recently called and
-/// deallocating those at the bottom after a defined capacity is exceeded.
+/// This rolling dictionary allows cached objects to automatically "decay" by
+/// keeping a ranking of most-to-least recently called and deallocating those at the
+/// bottom after a defined capacity is exceeded.
 ///
 /// ```swift
 /// var headerImages = DecayingCache<String, ImageData>()
 /// ```
 ///
-/// Take this cache for example, where the key describes a photo and the value is decoded into an image. When the user goes to view the
-/// cached photo, the key-value pair will be sent to the top-ranked placement in the cache order. Once the amount of images cached exceed
-/// the total capacity of the images the cache can carry, the least viewed image will deallocate.
+/// Take this cache for example, where the key describes a photo and the value is
+/// decoded into an image. When the user goes to view the cached photo, the
+/// key-value pair will be sent to the top-ranked placement in the cache order. Once
+/// the amount of images cached exceed the total capacity of the images the cache
+/// can carry, the least viewed image will deallocate.
 ///
-/// The `onDelete` closure can be used to call functions at deallocation, allowing synchronous changes to variables such as internal timers
-/// and counters or references to data filesizes.
+/// The `onDelete` closure can be used to call functions at deallocation, allowing
+/// synchronous changes to variables such as internal timers and counters or
+/// references to data filesizes.
 ///
 /// ```swift
 /// var itemsDeleted: Int = 0
@@ -30,8 +31,9 @@ import Foundation
 /// )
 /// ```
 ///
-/// Keep in mind that key-value pairs will only decay *after* the capacity is exceeded. In the event of `itemCache`, the 513th pair will
-/// be the one that starts the rotation.
+/// Keep in mind that key-value pairs will only decay *after* the capacity is
+/// exceeded. In the event of `itemCache`, the 513th pair will be the one that
+/// starts the rotation.
 ///
 /// For the sake of this example, `itemCache["Item_1"]` is the least used item.
 ///
@@ -51,6 +53,10 @@ import Foundation
 /// print(itemCache.first!.key) // Returns value of "Item_2"
 /// print(itemCache.count) // Returns "512"
 /// ```
+///
+/// - Parameter capacity: The maximum capacity of objects the cache will
+/// store before objects decay. Defaults to 512.
+/// - Parameter onDelete: The action to perform when a key-value pair decays.
 public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     // MARK: - Properties
     
@@ -131,7 +137,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
     /// The amount of empty slots in the cache.
     public var remainingSlots: Int { capacity - count }
     
-    /// A collection containing just the keys of the dictionary.
+    /// A collection containing just the keys of the cache.
     ///
     /// - Returns: The keys of the dictionary, sorted by most-to-least recently called.
     public var keys: [Key] {
@@ -144,7 +150,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
         return result
     }
     
-    /// A collection containing just the values of the dictionary.
+    /// A collection containing just the values of the cache.
     ///
     /// - Returns: The values of the dictionary, sorted by most-to-least recently called.
     public var values: [Value] {
@@ -157,7 +163,7 @@ public final class DecayingCache<Key: Hashable, Value>: Identifiable {
         return result
     }
     
-    /// Removes all key-value pairs from the dictionary.
+    /// Removes all key-value pairs from the cache.
     ///
     /// Calling this method invalidates all indices with respect to the
     /// dictionary.

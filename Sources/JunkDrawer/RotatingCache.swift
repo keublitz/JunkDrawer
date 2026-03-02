@@ -2,14 +2,18 @@ import Foundation
 
 /// A cache dictionary that rotates out elements when a defined capacity is reached.
 ///
-/// - Parameter capacity: The maximum capacity of items the cache will store before rotating items out. Defaults to 512.
-/// - Parameter onDelete: The action to perform when a key-value pair is rotated out.
+/// - Parameter capacity: The maximum capacity of items the cache will store
+/// before rotating items out. Defaults to 512.
+/// - Parameter onDelete: The action to perform when a key-value pair is
+/// rotated out.
 ///
-/// There's no priority of elements to keep other than how recently they were added to the cache. For persistent ranked caching based on
-/// how recently the element was called/referenced, see ``DecayingCache``.
+/// There's no priority of elements to keep other than how recently they were
+/// added to the cache. For persistent ranked caching based on how recently the
+/// element was called/referenced, see ``DecayingCache``.
 ///
-/// The `onDelete` closure can be used to call functions at deallocation, allowing synchronous changes to variables such as internal timers
-/// and counters or references to data filesizes.
+/// The `onDelete` closure can be used to call functions at deallocation, allowing
+/// synchronous changes to variables such as internal timers and counters or
+/// references to data filesizes.
 ///
 /// ```swift
 /// var itemsDeleted: Int = 0
@@ -23,8 +27,9 @@ import Foundation
 /// )
 /// ```
 ///
-/// Keep in mind that key-value pairs will only be rotated out *after* the capacity is exceeded. In the event of `itemCache`, the 251st pair
-/// will be the one that starts the rotation.
+/// Keep in mind that key-value pairs will only be rotated out *after* the capacity
+/// is exceeded. In the event of `itemCache`, the 251st pair will be the one that
+/// starts the rotation.
 ///
 /// ```swift
 /// for i in 1...250 {

@@ -7,7 +7,7 @@ import SwiftUI
 ///
 /// ```swift
 /// let key = StorageKey("itemsArrayCache")
-/// let unit = StorageUnit<Codable>(key)
+/// let unit = StorageUnit<[Item]>(key)
 /// ```
 ///
 /// With the unit established, you can store and load data with sleek and easy helper functions. Saving requires simply the data value in question placed in an inout initializer.
@@ -30,7 +30,7 @@ import SwiftUI
 ///
 /// ## Storing as JSON vs Data
 ///
-/// Data can be stored as either a JSON dictionary or the raw `Data` type. Storing as raw data can be beneficial for exceptionally large objects, such as raw image data. By default, all data is encoded and decoded as JSON.
+/// Data can be stored as either a JSON dictionary or the raw `Data` type. The most efficient option will be automatically chosen. Storing as raw data can be beneficial for exceptionally large objects, such as raw image data. By default, all data is encoded and decoded as JSON.
 /// ```swift
 /// let image: UIImage
 /// let data = image.jpegData()
@@ -64,8 +64,6 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     ///
     /// - Parameter data: The data to encode and save.
     /// - Parameter encodeRawData: A boolean value for encoding into raw `Data`. `true` stores the raw data; `false` stores the data as a JSON dictionary. Defaults to `false`.
-    ///
-    /// - Note: When saving with `UserDefaults` (setting the `StorageKey` value to `String`), data will always encode as JSON.
     public func save(_ data: Storage, encodeRawData: Bool? = nil) throws {
         switch key {
         case let key as URL: try save(data, toURL: key)
@@ -111,7 +109,6 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     /// Returns data from the unit.
     ///
-    /// - Parameter decodeRawData: A boolean value for decoding into raw data. `true` loads the raw data; `false` decodes the data into a JSON dictionary. Defaults to `false`.
     /// - Returns: The `Codable` data previously saved to the unit.
     public func load() throws -> Storage {
         switch key {
@@ -150,8 +147,7 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     /// Loads data from the unit into an object.
     ///
-    /// - Parameter data: The object to load the value into.
-    /// - Parameter decodeRawData: A boolean value for decoding into raw `Data`. `true` loads the raw data; `false` decodes the data into a JSON dictionary. Defaults to `false`.
+    /// - Parameter data: The object to load the value into..
     public func load(into data: inout Storage) throws {
         switch key {
         case let key as URL: data = try load(fromURL: key)
@@ -171,7 +167,7 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 /// let itemCacheKey = StorageKey(itemCacheURL)
 /// ```
 ///
-/// With the <doc:Swift/String/key> extension, a key can be created directly from the `String` and/or `URL` element. This extension also supports explicit typing upfront or within the variable.
+/// With the <doc:Swift/String/key> extension, a key can be created directly from the `String` and/or `URL` element.
 /// ```swift
 /// let itemCacheKey: StorageKey = itemCacheURL.key
 /// // Or...
@@ -180,7 +176,6 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
 /// ```
 ///
 /// - Parameter value: The value of the key, expressible through `String` or `URL`.
-/// - Parameter inputType: The type of data being stored.
 public struct StorageKey: Identifiable, Equatable {
     public var id: String { value.asString }
     
