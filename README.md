@@ -6,6 +6,77 @@ A varied collection of Swift data structures.
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/keublitz/JunkDrawer">
 </p>
 
+## ColorData
+
+A codable structure that can hold color data.
+
+### Overview
+
+Colors are notriously un-codable classes, and cannot be directly stored in a codable data structure. `ColorData` provides a way to convert colors into data that conforms to Codable.
+
+```swift
+struct Object: Codable {
+    let blue = Color.blue             // ❌ Won't conform
+    let blue = ColorData(Color.blue)  // ✅ Will conform
+}
+```
+
+### Initializing
+
+`ColorData` can be initialized in multiple ways:
+
+- Use the static `.of` function (requires explicit typing):
+```swift
+ColorData.of(Color.blue)
+```
+
+- Initialize with the color value:
+```swift
+ColorData(.blue)           
+ColorData(uiColor: .blue)
+```
+
+- Use the `.data` extension directly on the color object:
+```swift
+let blue: Color = .blue
+let data: ColorData = blue.data
+```
+
+- Set the red, green, blue, and alpha values manually:
+```swift
+ColorData(r: 1.0, g: 0.0, b: 0.0) // Returns red
+ColorData(r: 0.0, g: 1.0, b: 0.0) // Returns green
+ColorData(r: 1.0, g: 0.0, b: 1.0) // Returns purple
+```
+
+Once initialized, helper extensions can convert data back into usable color classes.
+
+```swift
+let blueData: ColorData = Object.blue
+let blue: Color = Object.blue.color!
+let blueUI: UIColor = Object.blue.uiColor!
+```
+
+### Encoding Opacity
+
+Alpha values are also encoded into `ColorData` and decoded into all usable color classes, so even colors with opacity modifiers can be encoded as is.
+
+```swift
+let fullOrange: Color = .orange
+let opaqueOrange: Color = .orange.opacity(0.5)
+
+let fullOrangeData = ColorData.of(fullOrange)
+let opaqueOrangeData = ColorData.of(opaqueOrange)
+
+print(fullOrangeData.hex!)    // Returns #FF9230FF
+print(opaqueOrangeData.hex!)  // Returns #FF923080
+```
+
+### Parameters
+- `hex`: The hexadecimal code of the color.
+- `safeColor`: The color decoded from the data, returned as a non-optional value that falls back to `Color.clear`.
+- `safeUIColor`: The color decoded from the data, returned as a non-optional value that falls back to `Color.clear`.
+
 ## DecayingCache
 
 A cache that deallocates it's least-called objects past a certain capacity.

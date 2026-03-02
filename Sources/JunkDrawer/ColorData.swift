@@ -3,19 +3,44 @@ import Dialogue
 
 /// A codable structure that can hold color data.
 ///
-/// `Color` is a notoriously un-codable class, and cannot directly be stored in a codable data structure. `ColorData` provides a way to convert colors into a codable structure.
+/// Colors are notoriously un-codable classes, and cannot directly be stored in a codable data structure. `ColorData` provides a way to convert colors into data that conforms to Codable.
 ///
 /// ```swift
 /// struct Object: Codable {
-///     let blue = Color.blue           // ❌ Won't conform
-///     let blue = ColorData.of(.blue)  // ✅ Will conform
-///
-///     // Alternative Color -> ColorData helper:
-///     let blue: ColorData = Color.blue.data
+///     let blue = Color.blue             // ❌ Won't conform
+///     let blue = ColorData(Color.blue)  // ✅ Will conform
 /// }
 /// ```
 ///
-/// In addition to converting colors to data, helper extensions can convert data back into usable color classes.
+/// ## Initializing
+///
+/// `ColorData` can be initialized in multiple ways:
+///
+/// * Use the static `.of` function (requires explicit typing):
+/// ```swift
+/// ColorData.of(Color.blue)
+/// ```
+///
+/// * Initialize with the color value:
+/// ```swift
+/// ColorData(.blue)
+/// ColorData(uiColor: .blue)
+/// ```
+///
+/// * Use the `.data` extension directly on the color object:
+/// ```swift
+/// let blue: Color = .blue
+/// let data: ColorData = blue.data
+/// ```
+///
+/// * Set the red, blue, green, and alpha values manually:
+/// ```swift
+/// ColorData(r: 1.0, g: 0.0, b: 0.0) // Returns red
+/// ColorData(r: 0.0, g: 1.0, b: 0.0) // Returns green
+/// ColorData(r: 1.0, g: 0.0, b: 1.0) // Returns purple
+/// ```
+///
+/// Once initialized, helper extensions can convert data back into usable color classes.
 ///
 /// ```swift
 /// let blue = Object.blue         // Returns as ColorData
@@ -30,8 +55,8 @@ import Dialogue
 /// let fullOrange: Color = .orange
 /// let opaqueOrange: Color = .orange.opacity(0.5)
 ///
-/// let fullOrangeData = ColorData.of(fullOrange)!
-/// let opaqueOrangeData = ColorData.of(opaqueOrange)!
+/// let fullOrangeData = ColorData.of(fullOrange)
+/// let opaqueOrangeData = ColorData.of(opaqueOrange)
 ///
 /// print(fullOrangeData.hex!)    // Returns #FF9230FF
 /// print(opaqueOrangeData.hex!)  // Returns #FF923080
@@ -52,6 +77,10 @@ public struct ColorData: Codable, Equatable {
     // The opacity of the color, expressed as a decimal out of 1.0.
     internal let alpha: Float
     
+    /// - Parameter r: The red value of the color, expressed as a decimal out of 1.0.
+    /// - Parameter g: The green value of the color, expressed as a decimal out of 1.0.
+    /// - Parameter b: The blue value of the color, expressed as a decimal out of 1.0.
+    /// - Parameter alpha: The opacity of the color, expressed as a decimal out of 1.0. Defaults to 1.0 (full opacity).
     public init(r: Float, g: Float, b: Float, alpha: Float = 1) {
         guard r >= 0 && r <= 1,
               g >= 0 && g <= 1,
@@ -61,11 +90,8 @@ public struct ColorData: Codable, Equatable {
         }
         
         self.r = r
-        
         self.g = g
-        
         self.b = b
-        
         self.alpha = alpha
         
         let uiColor = UIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: CGFloat(alpha))
@@ -128,14 +154,14 @@ public struct ColorData: Codable, Equatable {
 public extension ColorData {
     /// An empty value.
     ///
-    /// - Returns: A `ColorData` object with red, green, and blue value set to 0, equivalent to black.
-    static var empty: Self { ColorData(r: 0, g: 0, b: 0) }
+    /// - Returns: A `ColorData` object with red, green, and blue value set to zero, equivalent to black.
+    static var empty: ColorData { ColorData(r: 0, g: 0, b: 0) }
     
-    static func of(_ color: ShapeStyleColor) -> Self { return color.data }
+    static func of(_ color: Color) -> Self { return color.data }
     
     /// The color decoded from the data.
     ///
-    /// - Returns: An optional `UIColor` value.
+    /// - Returns: An optional `Color` value.
     var color: Color? {
         guard let color = Color(hex: self.hex) else { return nil }
         
