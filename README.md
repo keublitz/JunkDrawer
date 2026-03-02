@@ -72,11 +72,6 @@ print(fullOrangeData.hex!)    // Returns #FF9230FF
 print(opaqueOrangeData.hex!)  // Returns #FF923080
 ```
 
-### Parameters
-- `hex`: The hexadecimal code of the color.
-- `safeColor`: The color decoded from the data, returned as a non-optional value that falls back to `Color.clear`.
-- `safeUIColor`: The color decoded from the data, returned as a non-optional value that falls back to `Color.clear`.
-
 ## DecayingCache
 
 A cache that deallocates it's least-called objects past a certain capacity.
@@ -183,8 +178,6 @@ print(itemCache.count) // Returns "250"
 - `keys`: A collection containing just the keys of the dictionary, sorted by most-to-least recently added.
 - `values`: A collection containing just the values of the dictionary, sorted by most-to-least recently added.
 - `removeAll()`: Removes all key-value pairs from the cache.
-
-> <b>Note:</b> When calling `keys` and/or `values` they will maintain the order of most-to-least recently added.
 
 ## StorageUnit
 
