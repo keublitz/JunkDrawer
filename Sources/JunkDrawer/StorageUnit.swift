@@ -44,7 +44,6 @@ import SwiftUI
 /// ```
 ///
 /// - Parameter key: The key that determines which unit and what kind of data to read and write from.
-/// - Parameter rawData: A boolean value indicating how to encode/decode the data. When `true`, data will encode/decode as a JSON dictionary. When `false`, data will decode/encode as `Data`. Defaults to `true`.
 public final class StorageUnit<Storage: Codable>: Identifiable {
     // MARK: - Properties
     
@@ -53,20 +52,10 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     // The String or URL value of the key.
     private var key: StorageKeyValue
     
-    // TRUE: the data is stored as a JSON dictionary.
-    private let rawData: Bool
-    
     // MARK: - Initializers
-    
-    @available(*, deprecated, message: "Type inference is now handled automatically. Initialize only the key value.")
-    public init(_ key: StorageKey, rawData: Bool = false) {
-        self.key = key.value
-        self.rawData = rawData
-    }
     
     public init(_ key: StorageKey) {
         self.key = key.value
-        self.rawData = false
     }
     
     // MARK: - Helpers
