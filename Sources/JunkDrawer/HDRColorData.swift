@@ -2,7 +2,8 @@ import SwiftUI
 import Dialogue
 
 /// A codable structure that can hold HDR color data.
-@available(*, deprecated, message: "HDRColorData is a work in progress and will not produce stable results. Avoid using for now.")
+@available(iOS, introduced: 16.0, deprecated: 100000.0, message: "HDRColorData is a work in progress and will not produce stable results. Avoid using for now.")
+@available(macOS, introduced: 10.13, deprecated: 100000.0, message: "HDRColorData is a work in progress and will not produce stable results. Avoid using for now.")
 public struct HDRColorData: Codable, Equatable {
     private let r: Float
     
