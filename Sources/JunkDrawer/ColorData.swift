@@ -158,24 +158,6 @@ public extension ColorData {
     static var empty: ColorData { ColorData(r: 0, g: 0, b: 0) }
     
     static func of(_ color: Color) -> Self { return color.data }
-    
-    /// The color decoded from the data.
-    ///
-    /// - Returns: An optional `Color` value.
-    var color: Color? {
-        guard let color = Color(hex: self.hex) else { return nil }
-        
-        return color
-    }
-    
-    /// The color decoded from the data.
-    ///
-    /// - Returns: An optional `UIColor` value.
-    var uiColor: UIColor? {
-        guard let uiColor = UIColor(hex: self.hex) else { return nil }
-        
-        return uiColor
-    }
 }
 
 // MARK: - Protocols
@@ -235,4 +217,24 @@ extension UIColor: ShapeStyleColor {
     public var color: Color { Color(uiColor: self) }
     
     public var uiColor: UIColor { self }
+}
+
+extension ColorData: ShapeStyleColor {
+    public var data: ColorData { self }
+    
+    public var color: Color {
+        guard let color = Color(hex: self.hex) else {
+            return .clear
+        }
+        
+        return color
+    }
+    
+    public var uiColor: UIColor {
+        guard let uiColor = UIColor(hex: self.hex) else {
+            return .clear
+        }
+        
+        return uiColor
+    }
 }
