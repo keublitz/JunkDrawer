@@ -1,5 +1,5 @@
 import SwiftUI
-import Dialogue
+import OSLog
 
 /// A codable structure that can hold color data.
 ///
@@ -86,7 +86,7 @@ public struct ColorData: Codable, Equatable {
               g >= 0 && g <= 1,
               b >= 0 && b <= 1,
               alpha >= 0 && alpha <= 1 else {
-            fatalError("Value overflow, all values must be between 0 and 1. (r: \(r), g: \(g), b: \(b), alpha: \(alpha))")
+            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(r), g: \(g), b: \(b), alpha: \(alpha))")
         }
         
         self.r = r
@@ -103,7 +103,7 @@ public struct ColorData: Codable, Equatable {
         let data = color.data
         
         guard data.valuesAreValid else {
-            fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
+            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
         }
         
         self.r = data.r
@@ -120,7 +120,7 @@ public struct ColorData: Codable, Equatable {
         let data = uiColor.data
         
         guard data.valuesAreValid else {
-            fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
+            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
         }
         
         self.r = data.r
@@ -185,7 +185,8 @@ extension Color: Colorful {
         var aVal: CGFloat = 0
         
         guard uiColor.getRed(&rVal, green: &gVal, blue: &bVal, alpha: &aVal) else {
-            fatalError("Could not convert color to RGB color space.")
+            logger.warning("Could not convert Color [\(self.hex)] to RGB color space. Returning empty ColorData value (black).")
+            return .empty
         }
         
         return ColorData(r: Float(rVal), g: Float(gVal), b: Float(bVal), alpha: Float(aVal))
@@ -208,7 +209,8 @@ extension UIColor: Colorful {
         var aVal: CGFloat = 0
         
         guard self.getRed(&rVal, green: &gVal, blue: &bVal, alpha: &aVal) else {
-            fatalError("Could not convert color to RGB color space.")
+            logger.warning("Could not return RGB color space components for \(self.hex). Returning empty ColorData value (black).")
+            return .empty
         }
         
         return ColorData(r: Float(rVal), g: Float(gVal), b: Float(bVal), alpha: Float(aVal))
@@ -224,6 +226,7 @@ extension ColorData: Colorful {
     
     public var color: Color {
         guard let color = Color(hex: self.hex) else {
+            logger.warning("Could not create color for \(self.hex), returning clear color. Check other logs for more information.")
             return .clear
         }
         
@@ -232,6 +235,7 @@ extension ColorData: Colorful {
     
     public var uiColor: UIColor {
         guard let uiColor = UIColor(hex: self.hex) else {
+            logger.warning("Could not create color for \(self.hex), returning clear color. Check other logs for more information.")
             return .clear
         }
         

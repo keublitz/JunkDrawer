@@ -12,6 +12,14 @@ internal typealias NativeColor = NSColor
 
 internal let logger = Logger(subsystem: "com.keublitz.junkdrawer", category: "JunkDrawer")
 
+internal extension Logger {
+    /// Logs an error message before stopping execution of the program.
+    func fatalError(_ message: String) -> Never {
+        self.error("\(message)")
+        exit(1)
+    }
+}
+
 // MARK: - Color
 
 // ForEachListView, ListView
