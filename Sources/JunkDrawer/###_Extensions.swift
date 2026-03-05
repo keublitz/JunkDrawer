@@ -1,5 +1,6 @@
 import SwiftUI
 import ColorThiefSwift
+import OSLog
 
 #if canImport(UIKit)
 internal typealias NativeImage = UIImage
@@ -8,6 +9,8 @@ internal typealias NativeColor = UIColor
 internal typealias NativeImage = NSImage
 internal typealias NativeColor = NSColor
 #endif
+
+internal let logger = Logger(subsystem: "com.keublitz.junkdrawer", category: "JunkDrawer")
 
 // MARK: - Color
 
