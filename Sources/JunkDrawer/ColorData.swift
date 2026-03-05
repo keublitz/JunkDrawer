@@ -168,31 +168,11 @@ public extension ColorData {
         return color
     }
     
-    /// The color decoded from the data. Falls back to `.clear` if color decoding fails.
-    ///
-    /// - Returns: A `Color` value, returning `.clear` if decoding fails.
-    /// - Important: Recommended for use only if `init?(hex:)` is guaranteed to *not* return nil. Otherwise, use the optional type <doc:color>.
-    var safeColor: Color {
-        guard let color = Color(hex: self.hex) else { return .clear }
-        
-        return color
-    }
-    
     /// The color decoded from the data.
     ///
     /// - Returns: An optional `UIColor` value.
     var uiColor: UIColor? {
         guard let uiColor = UIColor(hex: self.hex) else { return nil }
-        
-        return uiColor
-    }
-    
-    /// The color decoded from the data. Falls back to `.clear` if color decoding fails.
-    ///
-    /// - Returns: A `UIColor` value, returning `.clear` if decoding fails.
-    /// - Important: Recommended for use only if `init?(hex:)` is guaranteed to *not* return nil. Otherwise, use the optional type <doc:color>.
-    var safeUIColor: UIColor {
-        guard let uiColor = UIColor(hex: self.hex) else { return .clear }
         
         return uiColor
     }
