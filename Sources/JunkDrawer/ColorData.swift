@@ -203,12 +203,16 @@ public extension ColorData {
 /// A protocol for color variants of a ShapeStyle.
 public protocol ShapeStyleColor {
     var data: ColorData { get }
+    
+    var color: Color { get }
+    
+    var uiColor: UIColor { get }
 }
 
 extension Color: ShapeStyleColor {
     /// Stores the values of the color into a ColorData object.
     public var data: ColorData {
-        let uiColor = UIColor(self)
+        let uiColor = self.uiColor
         
         var rVal: CGFloat = 0
         
@@ -224,6 +228,10 @@ extension Color: ShapeStyleColor {
         
         return ColorData(r: Float(rVal), g: Float(gVal), b: Float(bVal), alpha: Float(aVal))
     }
+    
+    public var color: Color { self }
+    
+    public var uiColor: UIColor { UIColor(self) }
 }
 
 extension UIColor: ShapeStyleColor {
@@ -243,4 +251,8 @@ extension UIColor: ShapeStyleColor {
         
         return ColorData(r: Float(rVal), g: Float(gVal), b: Float(bVal), alpha: Float(aVal))
     }
+    
+    public var color: Color { Color(uiColor: self) }
+    
+    public var uiColor: UIColor { self }
 }
