@@ -162,17 +162,67 @@ public extension ColorData {
 
 // MARK: - Protocols
 
-/// A protocol for color related types.
+/// A protocol for the various types that can express color values.
 public protocol Colorful {
+    /// The data of the color value.
     var data: ColorData { get }
     
+    /// The color value expressed visually.
     var color: Color { get }
     
+    /// The color value expressed visually.
     var uiColor: UIColor { get }
+    
+    /// The hexadecimal string of the color value.
+    ///
+    /// ## Example:
+    /// ```swift
+    /// print(Color.purple.hex) // Returns "#A020F0"
+    /// ```
+    var hex: String { get }
 }
 
 extension Color: Colorful {
-    /// Stores the values of the color into a ColorData object.
+    /// - Parameter hex: The six- or eight-digit hexadecimal string.
+    /// - Returns: An optional `Color` value that returns nil if the hexadecimal string cannot be decoded.
+    public init?(hex: String) {
+        // Clean whitespaces, newlines, and the pound sign from the input.
+        let hexadecimal = hex
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "#", with: "")
+        
+        // 64-bit integer to scan hexadecimal value into.
+        var rgb = UInt64()
+        
+        // Check that a value can be scanned from the hexadecimal string and stored in var rgb.
+        guard Scanner(string: hexadecimal).scanHexInt64(&rgb) else {
+            logger.error("Cannot scan value from hexadecimal string (\(hex)).")
+            return nil
+        }
+        
+        // If the hexadecimal string has eight characters, scan each byte (two characters) for a value that can be decoded into a floating point between 0-1.
+        
+        // Example:
+        // [#00]0AF9FF -> #00 is equal to 0, those first two characters represent red, so r = 0.
+        // #000AF9[FF] -> FF is equal to 1, so a = 1.
+        if hexadecimal.count == 8 {
+            let r = CGFloat((rgb >> 24) & 0xFF) / 255.0
+            let g = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            let b = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            let a = CGFloat(rgb & 0xFF) / 255.0
+            
+            self.init(red: r, green: g, blue: b, opacity: a)
+        }
+        // If hexadecimal count is not 8 (doesn't have opacity value), decode just RGB values.
+        else {
+            let r = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            let g = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            let b = CGFloat(rgb & 0xFF) / 255.0
+            
+            self.init(red: r, green: g, blue: b)
+        }
+    }
+    
     public var data: ColorData {
         let uiColor = self.uiColor
         
@@ -195,10 +245,58 @@ extension Color: Colorful {
     public var color: Color { self }
     
     public var uiColor: UIColor { UIColor(self) }
+    
+    public var hex: String {
+        // Ensure that the RGBA values can be recreated.
+        guard let components = NativeColor(self).cgColor.components else {
+            logger.error("Can't get components of color to create hexadecimal code.")
+            return "nil"
+        }
+        
+        // Do some byte-pointer stuff that I'm too tired to explain right now.
+        let r = Int((components[0] * 255.0).rounded()) & 0xFF
+        let g = Int((components[1] * 255.0).rounded()) & 0xFF
+        let b = Int((components[2] * 255.0).rounded()) & 0xFF
+        let a = Int((components[3] * 255.0).rounded()) & 0xFF
+        
+        // Display in hexadecimal format.
+        return String(format: "#%02X%02X%02X%02X", r, g, b, a)
+    }
 }
 
 extension UIColor: Colorful {
-    /// Stores the values of the color into a ColorData object.
+    /// - Parameter hex: The six- or eight-digit hexadecimal string.
+    /// - Parameter alpha: The opacity value of the color, represented as a value between 0 and 1. Defaults to 1.
+    /// - Returns: An optional `Color` value that returns nil if the hexadecimal string cannot be decoded.
+    public convenience init?(hex: String, alpha: CGFloat = 1.0) {
+        let hexadecimal = hex
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "#", with: "")
+        
+        var rgb = UInt64()
+        
+        guard Scanner(string: hexadecimal).scanHexInt64(&rgb) else {
+            logger.error("Unable to return color from \(hex) — can't scan 64-bit integer value from the hex string.")
+            return nil
+        }
+        
+        if hexadecimal.count == 8 {
+            let r = CGFloat((rgb >> 24) & 0xFF) / 255.0
+            let g = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            let b = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            let a = CGFloat(rgb & 0xFF) / 255.0
+            
+            self.init(red: r, green: g, blue: b, alpha: a)
+        }
+        else {
+            let r = CGFloat((rgb >> 16) & 0xFF) / 255.0
+            let g = CGFloat((rgb >> 8) & 0xFF) / 255.0
+            let b = CGFloat(rgb & 0xFF) / 255.0
+            
+            self.init(red: r, green: g, blue: b, alpha: alpha)
+        }
+    }
+    
     public var data: ColorData {
         var rVal: CGFloat = 0
         
@@ -219,6 +317,31 @@ extension UIColor: Colorful {
     public var color: Color { Color(uiColor: self) }
     
     public var uiColor: UIColor { self }
+    
+    public var hex: String {
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
+            logger.error("Cannot create hexadecimal code — the sRGB color space couldn't be built.")
+            return "null"
+        }
+        
+        guard let rgbaColor = self.cgColor.converted(to: colorSpace, intent: .defaultIntent, options: nil) else {
+            logger.error("Cannot create hexadecimal code - could not convert UIColor value to sRGB color space.")
+            return "null"
+        }
+        
+        guard let components = rgbaColor.components,
+              components.count >= 4 else {
+            logger.error("Cannot create hexadecimal code — sRGB color fewer than four components.")
+            return "null"
+        }
+        
+        let r = Int((components[0]) * 255.0)
+        let g = Int((components[1]) * 255.0)
+        let b = Int((components[2]) * 255.0)
+        let a = Int((components[3]) * 255.0)
+        
+        return String(format: "#%02X%02X%02X%02X", r, g, b, a)
+    }
 }
 
 extension ColorData: Colorful {
