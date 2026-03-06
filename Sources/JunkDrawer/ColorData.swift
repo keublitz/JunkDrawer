@@ -66,16 +66,16 @@ public struct ColorData: Codable, Equatable {
     public let hex: String
     
     // The red value of the color, expressed as a decimal out of 1.0.
-    internal let r: Float
+    public let r: Float
     
     // The green value of the color, expressed as a decimal out of 1.0.
-    internal let g: Float
+    public let g: Float
     
     // The blue value of the color, expressed as a decimal out of 1.0.
-    internal let b: Float
+    public let b: Float
     
     // The opacity of the color, expressed as a decimal out of 1.0.
-    internal let alpha: Float
+    public let alpha: Float
     
     /// - Parameter r: The red value of the color, expressed as a decimal out of 1.0.
     /// - Parameter g: The green value of the color, expressed as a decimal out of 1.0.
