@@ -75,7 +75,7 @@ public struct ColorData: Codable, Equatable {
     public let b: Float
     
     // The opacity of the color, expressed as a decimal out of 1.0.
-    public let alpha: Float
+    public let a: Float
     
     /// - Parameter r: The red value of the color, expressed as a decimal out of 1.0.
     /// - Parameter g: The green value of the color, expressed as a decimal out of 1.0.
@@ -92,7 +92,7 @@ public struct ColorData: Codable, Equatable {
         self.r = r
         self.g = g
         self.b = b
-        self.alpha = alpha
+        self.a = alpha
         
         let uiColor = UIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: CGFloat(alpha))
         self.hex = uiColor.hex
@@ -103,15 +103,15 @@ public struct ColorData: Codable, Equatable {
         let data = color.data
         
         guard data.valuesAreValid else {
-            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
+            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.a))")
         }
         
         self.r = data.r
         self.g = data.g
         self.b = data.b
-        self.alpha = data.alpha
+        self.a = data.a
         
-        let uiColor = UIColor(red: CGFloat(data.r), green: CGFloat(data.g), blue: CGFloat(data.b), alpha: CGFloat(data.alpha))
+        let uiColor = UIColor(red: CGFloat(data.r), green: CGFloat(data.g), blue: CGFloat(data.b), alpha: CGFloat(data.a))
         self.hex = uiColor.hex
     }
     
@@ -120,22 +120,22 @@ public struct ColorData: Codable, Equatable {
         let data = uiColor.data
         
         guard data.valuesAreValid else {
-            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.alpha))")
+            logger.fatalError("Value overflow, all values must be between 0 and 1. (r: \(data.r), g: \(data.g), b: \(data.b), alpha: \(data.a))")
         }
         
         self.r = data.r
         self.g = data.g
         self.b = data.b
-        self.alpha = data.alpha
+        self.a = data.a
         
-        let uiColorSet = UIColor(red: CGFloat(data.r), green: CGFloat(data.g), blue: CGFloat(data.b), alpha: CGFloat(data.alpha))
+        let uiColorSet = UIColor(red: CGFloat(data.r), green: CGFloat(data.g), blue: CGFloat(data.b), alpha: CGFloat(data.a))
         self.hex = uiColorSet.hex
     }
     
     public static func == (lhs: ColorData, rhs: ColorData) -> Bool {
         let hexesMatch: Bool = lhs.hex == rhs.hex
         
-        let valuesMatch: Bool = lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.alpha == rhs.alpha
+        let valuesMatch: Bool = lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a
         
         return hexesMatch && valuesMatch
     }
@@ -145,7 +145,7 @@ public struct ColorData: Codable, Equatable {
         self.r >= 0 && self.r <= 1 &&
         self.g >= 0 && self.g <= 1 &&
         self.b >= 0 && self.b <= 1 &&
-        self.alpha >= 0 && self.alpha <= 1
+        self.a >= 0 && self.a <= 1
     }
 }
 
