@@ -15,7 +15,7 @@ internal let logger = Logger(subsystem: "com.keublitz.junkdrawer", category: "Ju
 internal extension Logger {
     /// Logs an error message before stopping execution of the program.
     func fatalError(_ message: String) -> Never {
-        self.error("\(message)")
+        self.critical("\(message)")
         exit(1)
     }
 }
@@ -69,8 +69,3 @@ public extension View {
         }
     }
 }
-
-// MARK: - Lone extensions
-
-// ColorAlgorithm
-
