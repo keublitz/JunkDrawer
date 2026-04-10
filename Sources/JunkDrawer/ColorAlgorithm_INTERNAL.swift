@@ -2,6 +2,7 @@ import SwiftUI
 import ColorThiefSwift
 import Dialogue
 
+#if os(iOS)
 final internal class ColorAlgorithm {
     private let image: UIImage
     
@@ -557,4 +558,4 @@ fileprivate extension UIColor {
         return RGBvaluesAreAbove230 && lessThan10PointDifferenceBetweenAllValues
     }
 }
-
+#endif

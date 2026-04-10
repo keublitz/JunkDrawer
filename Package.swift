@@ -7,7 +7,7 @@ let package = Package(
     name: "JunkDrawer",
     platforms: [
         .iOS(.v16),
-        .macOS(.v10_13),
+        .macOS(.v12),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -18,7 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/yamoridon/ColorThiefSwift", from: "0.5.0"),
-        .package(url: "https://github.com/keublitz/Dialogue", from: "0.9.0")
+        .package(url: "https://github.com/keublitz/Dialogue", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

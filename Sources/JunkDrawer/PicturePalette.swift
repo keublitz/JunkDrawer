@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 final public class PicturePalette {
     private let image: UIImage
     
@@ -71,3 +72,4 @@ internal extension UIImage {
         return arr
     }
 }
+#endif

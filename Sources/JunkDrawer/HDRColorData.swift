@@ -1,6 +1,7 @@
 import SwiftUI
 import Dialogue
 
+#if os(iOS)
 /// A codable structure that can hold HDR color data.
 @available(iOS, introduced: 16.0, deprecated: 100000.0, message: "HDRColorData is a work in progress and will not produce stable results. Avoid using for now.")
 @available(macOS, introduced: 10.13, deprecated: 100000.0, message: "HDRColorData is a work in progress and will not produce stable results. Avoid using for now.")
@@ -32,40 +33,41 @@ public struct HDRColorData: Codable, Equatable {
     }
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.alpha == rhs.alpha
+        lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a
     }
 }
 
-//public extension HDRColorData {
-//    var color: Color? {
-//        guard let colorSpace = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
-//              let cgColor = CGColor(colorSpace: colorSpace, components: [CGFloat(self.r), CGFloat(self.g), CGFloat(self.b), CGFloat(self.alpha)]) else {
-//            return nil
-//        }
-//        
-//        return Color(cgColor: cgColor)
-//    }
-//}
-//
-//public extension ColorData {
-//    /// Returns data of the color converted to HDR by an amount of brightness.
-//    ///
-//    /// # Explanation
-//    /// The luminance of the HDR color data is determined by a formula from the Rec. 709 standard, which is the color profile standard for HDTV and the basis for sRGB.
-//    ///
-//    /// ```swift
-//    /// let luminance = r * 0.2126 + g * 0.7152 + b * 0.0722
-//    /// ```
-//    func hdr(brightness: Float = 1.5) -> HDRColorData {
-//        // Rec. 709 luminance weight formula
-//        let luminance = self.r * 0.2126 + self.g * 0.7152 + b * 0.0722
-//        let boost = 1.0 + (brightness - 1.0) * luminance
-//        
-//        return HDRColorData(
-//            r: self.r * boost,
-//            g: self.g * boost,
-//            b: self.b * boost,
-//            alpha: self.alpha
-//        )
-//    }
-//}
+public extension HDRColorData {
+    var color: Color? {
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.extendedLinearSRGB),
+              let cgColor = CGColor(colorSpace: colorSpace, components: [CGFloat(self.r), CGFloat(self.g), CGFloat(self.b), CGFloat(self.a)]) else {
+            return nil
+        }
+        
+        return Color(cgColor: cgColor)
+    }
+}
+
+public extension ColorData {
+    /// Returns data of the color converted to HDR by an amount of brightness.
+    ///
+    /// # Explanation
+    /// The luminance of the HDR color data is determined by a formula from the Rec. 709 standard, which is the color profile standard for HDTV and the basis for sRGB.
+    ///
+    /// ```
+    /// let luminance = r * 0.2126 + g * 0.7152 + b * 0.0722
+    /// ```
+    func hdr(brightness: Float = 1.5) -> HDRColorData {
+        // Rec. 709 luminance weight formula
+        let luminance = self.r * 0.2126 + self.g * 0.7152 + b * 0.0722
+        let boost = 1.0 + (brightness - 1.0) * luminance
+        
+        return HDRColorData(
+            r: self.r * boost,
+            g: self.g * boost,
+            b: self.b * boost,
+            a: self.a
+        )
+    }
+}
+#endif

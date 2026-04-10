@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 @available(iOS 17.0, *)
 final internal class ColorBlender {
     let lhs: Color
@@ -83,3 +84,4 @@ public extension ColorData {
         blend(with: rhs, steps: steps).dropFirst().dropLast()
     }
 }
+#endif
