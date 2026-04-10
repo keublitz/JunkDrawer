@@ -28,6 +28,7 @@ internal let listViewBackgroundLight: Color = Color(#colorLiteral(red: 0.8823529
 
 // MARK: - UIImage
 
+#if os(iOS)
 internal extension UIImage {
     // ColorAlgorithm
     /// Scales an image down using nearest neighbor rescaling.
@@ -69,3 +70,4 @@ public extension View {
         }
     }
 }
+#endif
