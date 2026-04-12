@@ -12,21 +12,21 @@ public struct HDRColorData: Codable, Equatable {
     
     private let b: Float
     
-    private let alpha: Float
+    private let a: Float
     
     public let sdr: ColorData
     
-    public init(r: Float, g: Float, b: Float, alpha: Float = 1) {
+    public init(r: Float, g: Float, b: Float, a: Float = 1) {
         self.r = r
         self.g = g
         self.b = b
-        self.alpha = alpha
+        self.a = a
         
         let SDRcolor = UIColor(
             red: CGFloat(min(r, 1)),
             green: CGFloat(min(g, 1)),
             blue: CGFloat(min(b, 1)),
-            alpha: CGFloat(min(alpha, 1))
+            alpha: CGFloat(min(a, 1))
         )
         
         self.sdr = SDRcolor.data
