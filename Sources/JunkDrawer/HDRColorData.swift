@@ -66,7 +66,7 @@ public extension ColorData {
             r: self.r * boost,
             g: self.g * boost,
             b: self.b * boost,
-            a: self.a
+            a: self.alpha
         )
     }
 }
