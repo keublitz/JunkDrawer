@@ -74,9 +74,9 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     // Encodes and saves data to a URL.
     private func save(_ storage: Storage, toURL url: URL) throws {
-        // Check if data type can be encoded as raw Data.
-        if let data = storage as? Data {
-            try data.write(to: url)
+        // Check if storage can be losslessly encoded as Data.
+        if let convertibleData = storage as? DataConvertible {
+            try convertibleData.toRawData().write(to: url)
         }
         // If not, encode as JSON.
         else {
@@ -98,9 +98,11 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     // Encodes and saves data to a UserDefaults key.
     private func save(_ storage: Storage, toUserDefaultsKey key: String) throws {
-        if let data = storage as? Data {
-            UserDefaults.standard.set(data, forKey: key)
+        // Check if storage can be losslessly encoded as Data.
+        if let convertibleData = storage as? DataConvertible {
+            UserDefaults.standard.set(convertibleData.toRawData(), forKey: key)
         }
+        // If not, encode as JSON.
         else {
             let json = try JSONEncoder().encode(storage)
             UserDefaults.standard.set(json, forKey: key)
@@ -120,28 +122,29 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     // Returns data from a URL.
     private func load(fromURL url: URL) throws -> Storage {
-        if let data = try Data(contentsOf: url) as? Storage {
-            return data
+        let data = try Data(contentsOf: url)
+        
+        // Check if storage can be decoded from a DataConvertible type.
+        if Storage.self is DataConvertible.Type, let storage = data as? Storage {
+            return storage
         }
+        // If not, decode from JSON.
         else {
-            let json = try Data(contentsOf: url)
-            return try JSONDecoder().decode(Storage.self, from: json)
+            return try JSONDecoder().decode(Storage.self, from: data)
         }
     }
     
     // Returns data from a UserDefaults key.
     private func load(fromUserDefaultsKey userDefaultsKey: String) throws -> Storage {
-        if let userDefault = UserDefaults.standard.data(forKey: userDefaultsKey) {
-            if let storageFromData = userDefault as? Storage {
-                return storageFromData
-            }
-            else {
-                let storageFromJSON = try JSONDecoder().decode(Storage.self, from: userDefault)
-                return storageFromJSON
-            }
+        guard let userDefaultsData = UserDefaults.standard.data(forKey: userDefaultsKey) else { throw StorageUnitError.unitIsEmpty(userDefaultsKey) }
+        
+        // Check if storage can be decoded from a DataConvertible type.
+        if Storage.self is DataConvertible.Type, let storage = userDefaultsData as? Storage {
+            return storage
         }
+        // If not, decode from JSON.
         else {
-            throw StorageUnitError.unitIsEmpty(userDefaultsKey)
+            return try JSONDecoder().decode(Storage.self, from: userDefaultsData)
         }
     }
     
@@ -228,3 +231,41 @@ fileprivate enum StorageUnitError: Error, LocalizedError {
         }
     }
 }
+
+// MARK: - DataConvertible
+
+/// A protocol for types that can be converted losslessly to `Data`.
+protocol DataConvertible {
+    /// Performs lossless conversion of a given type into `Data`.
+    func toRawData() -> Data
+}
+
+// MARK: Data
+
+extension Data: DataConvertible {
+    func toRawData() -> Data { self }
+}
+
+// MARK: UIImage
+
+extension UIImage: DataConvertible {
+    func toRawData() -> Data { pngData() ?? Data() }
+}
+
+// MARK: UUID
+
+extension UUID: DataConvertible {
+    func toRawData() -> Data { withUnsafeBytes(of: uuid) { Data($0) } }
+}
+
+// MARK: Numeric element types
+
+protocol BytesRepresentable {}
+extension Float: BytesRepresentable {}
+extension Double: BytesRepresentable {}
+extension Int: BytesRepresentable {}
+
+extension Array: DataConvertible where Element: BytesRepresentable {
+    func toRawData() -> Data { Swift.withUnsafeBytes(of: self) { Data($0) } }
+}
+
