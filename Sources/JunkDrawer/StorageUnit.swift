@@ -83,17 +83,6 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
             let json = try JSONEncoder().encode(storage)
             try json.write(to: url)
         }
-        
-//        if encodeRaw {
-//            guard let encodable = data as? Data else {
-//                throw StorageUnitError.cannotCastToData
-//            }
-//            try encodable.write(to: url)
-//        }
-//        else {
-//            let encoded = try JSONEncoder().encode(data)
-//            try encoded.write(to: url)
-//        }
     }
     
     // Encodes and saves data to a UserDefaults key.
