@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
 
+// MARK: - StorageUnit
+
 /// A class that stores, updates, and retrieves data.
 ///
 /// This class consists of generic save and load helpers, designed to decrease unnecessary verbosity and provide clear, readable direction on how the data is being handled, accessible through a lock-key system. To initialize a `StorageUnit`, create a <doc:StorageKey> by assigning a `UserDefaults` key or `URL` value, then use it to "unlock" the unit.
@@ -45,20 +47,20 @@ import SwiftUI
 /// ```
 /// - Parameter key: The key that determines which unit and what kind of data to read and write from.
 public final class StorageUnit<Storage: Codable>: Identifiable {
-    // MARK: - Properties
+    // MARK: Properties
     
     public var id: String { key.asString }
     
     // The String or URL value of the key.
     private var key: StorageKeyValue
     
-    // MARK: - Initializers
+    // MARK: Initializers
     
     public init(_ key: StorageKey) {
         self.key = key.value
     }
     
-    // MARK: - Helpers
+    // MARK: Helpers
     
     /// Saves data to the unit.
     ///
@@ -148,6 +150,8 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
         }
     }
 }
+
+// MARK: - StorageKey
 
 /// The key to initialize and call a <doc:StorageUnit>.
 ///
