@@ -30,19 +30,19 @@ import SwiftUI
 ///
 /// ## Storing as JSON vs Data
 ///
-/// Data can be stored as either a JSON dictionary or the raw `Data` type. The most efficient option will be automatically chosen. Storing as raw data can be beneficial for exceptionally large objects, such as raw image data. By default, all data is encoded and decoded as JSON.
+/// Data will be stored as either a JSON dictionary or the raw `Data` type. The most efficient option will be automatically chosen. Storing as raw data can be beneficial for exceptionally large objects, such as raw image data.
 /// ```swift
 /// let image: UIImage
 /// let data = image.jpegData()
-///
-/// let photoLibraryURL: URL
-/// let imageKey = photoLibraryURL.key
-/// let imageUnit = StorageUnit<Data>(imageKey, rawData: true)
-///
-/// try? imageUnit.save(data)
-/// var newData = try? imageUnit.load() // Returns as Data?
+/// let imageUnit = StorageUnit<Data>("image".key)
+/// // ^ This will encode as Data.
 /// ```
 ///
+/// ```swift
+/// let message = "Store this string!"
+/// let stringUnit = StorageUnit<String>("message".key)
+/// // ^ This will encode as JSON.
+/// ```
 /// - Parameter key: The key that determines which unit and what kind of data to read and write from.
 public final class StorageUnit<Storage: Codable>: Identifiable {
     // MARK: - Properties
