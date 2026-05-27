@@ -12,6 +12,15 @@ import SwiftUI
 /// let unit = StorageUnit<[Item]>(key)
 /// ```
 ///
+/// Keys can also be created directly through the unit initializer with the base `String` or `URL`.
+///
+/// ```swift
+/// let unit = StorageUnit<Item>("item")
+///
+/// let itemURL: URL
+/// let unit = StorageUnit<Item>(itemURL)
+/// ```
+///
 /// With the unit established, you can store and load data with sleek and easy helper functions. Saving requires simply the data value in question placed in an inout initializer.
 ///
 /// ```swift
@@ -35,9 +44,8 @@ import SwiftUI
 /// Data will be stored as either a JSON dictionary or the raw `Data` type. The most efficient option will be automatically chosen. Storing as raw data can be beneficial for exceptionally large objects, such as raw image data.
 /// ```swift
 /// let image: UIImage
-/// let data = image.jpegData()
-/// let imageUnit = StorageUnit<Data>("image".key)
-/// // ^ This will encode as Data.
+/// let imageUnit = StorageUnit<UIImage>("image".key)
+/// // ^ This will encode as PNG data.
 /// ```
 ///
 /// ```swift
@@ -58,6 +66,14 @@ public final class StorageUnit<Storage: Codable>: Identifiable {
     
     public init(_ key: StorageKey) {
         self.key = key.value
+    }
+    
+    public init(_ str: String) {
+        self.key = str.key.value
+    }
+    
+    public init(_ url: URL) {
+        self.key = url.key.value
     }
     
     // MARK: Helpers
