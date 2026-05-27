@@ -23,6 +23,7 @@ public typealias PlatformColor = NSColor
 /// `ColorData` can be initialized in multiple ways:
 ///
 /// * Initialize the red, blue, green, and alpha values manually:
+///
 /// ```swift
 /// ColorData(r: 1.0, g: 0.0, b: 0.0) // Returns red
 /// ColorData(r: 0.0, g: 1.0, b: 0.0) // Returns green
@@ -30,17 +31,26 @@ public typealias PlatformColor = NSColor
 /// ```
 ///
 /// * Initialize with the color value:
+///
 /// ```swift
 /// ColorData(.blue)
 /// ColorData(uiColor: .blue)
 /// ```
 ///
+/// * Initialize with a hex code:
+///
+/// ```swift
+/// ColorData(hex: "#ABC123")
+/// ```
+///
 /// * Use the static `.of` function:
+///
 /// ```swift
 /// ColorData.of(Color.blue)
 /// ```
 ///
 /// * Use the `.data` extension directly on the color object:
+///
 /// ```swift
 /// let blue: Color = .blue
 /// let data: ColorData = blue.data
@@ -184,6 +194,27 @@ public struct ColorData: Codable, Equatable {
         self.hex = nsColorSet.hex
     }
     #endif
+    
+    public init(hex: String) {
+        guard let color = Color(hex: hex) else {
+            logger.error("Hex code \(hex) could not be decoded - returning empty ColorData.")
+            self.hex = String()
+            self.r = 0
+            self.g = 0
+            self.b = 0
+            self.a = 0
+            return
+        }
+        
+        self.hex = hex
+        
+        let data = color.data
+        
+        self.r = data.r
+        self.g = data.g
+        self.b = data.b
+        self.a = data.a
+    }
     
     public static func == (lhs: ColorData, rhs: ColorData) -> Bool {
         let hexesMatch: Bool = lhs.hex == rhs.hex
