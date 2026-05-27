@@ -13,7 +13,7 @@ internal typealias NativeColor = NSColor
 internal let logger = Logger(subsystem: "com.keublitz.junkdrawer", category: "JunkDrawer")
 
 internal extension Logger {
-    /// Logs an error message before stopping execution of the program.
+    /// Writes information about an error to the log before stopping execution of the program.
     func fatalError(_ message: String) -> Never {
         self.critical("\(message)")
         exit(1)
