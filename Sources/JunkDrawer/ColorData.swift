@@ -142,6 +142,31 @@ public struct ColorData: Codable, Equatable {
         self.hex = uiColor.hex
     }
     
+    /// - Parameter uint32: The 32-bit binary integer hexadecimal to encode.
+    public init (uint32: UInt32, opacity: Double = 1.0) {
+        let red = Double((uint32 >> 16) & 0xFF) / 255
+        let green = Double((uint32 >> 8) & 0xFF) / 255
+        let blue = Double(uint32 & 0xFF) / 255
+        
+        let hexData = ColorData(Color.init(.sRGB, red: red, green: green, blue: blue, opacity: opacity))
+        
+        self.r = hexData.r
+        self.g = hexData.g
+        self.b = hexData.b
+        self.a = Float(opacity)
+        
+        self.hex = hexData.hex
+    }
+    
+    public var uint32: UInt32 {
+        let r = Int((self.r * 255.0).rounded()) & 0xFF
+        let g = Int((self.g * 255.0).rounded()) & 0xFF
+        let b = Int((self.b * 255.0).rounded()) & 0xFF
+        let a = Int((self.a * 255.0).rounded()) & 0xFF
+        
+        return UInt32((r << 24) | (g << 16) | (b << 8) | a)
+    }
+    
     /// - Parameter color: The `Color` to encode as data.
     public init(_ color: Color) {
         let data = color.data
@@ -282,6 +307,8 @@ public protocol Colorful {
     /// print(Color.purple.hex) // Returns "#A020F0"
     /// ```
     var hex: String { get }
+    
+    var uint32: UInt32 { get }
 }
 
 extension Color: Colorful {
@@ -337,6 +364,16 @@ extension Color: Colorful {
         }
     }
     
+    /// RGBA hexadecimal (0xRRGGBBAA).
+    public init(hex: UInt32) {
+        self.init(.sRGB,
+                  red: Double((hex >> 24) & 0xFF) / 255,
+                  green: Double((hex >> 16) & 0xFF) / 255,
+                  blue: Double((hex >> 8) & 0xFF) / 255,
+                  opacity: Double(hex & 0xFF) / 255
+        )
+    }
+    
     public var data: ColorData {
         let nativeColor = self.nativeColor
         
@@ -385,6 +422,20 @@ extension Color: Colorful {
         
         // Display in hexadecimal format.
         return String(format: "#%02X%02X%02X%02X", r, g, b, a)
+    }
+    
+    public var uint32: UInt32 {
+        guard let rgb = NativeColor(self).cgColor.converted(
+            to: CGColorSpace(name: CGColorSpace.sRGB)!,
+            intent: .defaultIntent, options: nil),
+              let components = rgb.components, components.count >= 4 else { return 0x00000000 }
+        
+        let r = Int((components[0] * 255.0).rounded()) & 0xFF
+        let g = Int((components[1] * 255.0).rounded()) & 0xFF
+        let b = Int((components[2] * 255.0).rounded()) & 0xFF
+        let a = Int((components[3] * 255.0).rounded()) & 0xFF
+        
+        return UInt32((r << 24) | (g << 16) | (b << 8) | a)
     }
 }
 
@@ -455,6 +506,22 @@ extension UIColor: Colorful {
     
     public var hex: String {
         return hexFromSRGBComponents(of: self.cgColor)
+    }
+    
+    public var uint32: UInt32 {
+        var red = CGFloat(),
+            green = CGFloat(),
+            blue = CGFloat(),
+            alpha = CGFloat()
+        
+        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        let r = Int((red * 255.0).rounded()) & 0xFF
+        let g = Int((green * 255.0).rounded()) & 0xFF
+        let b = Int((blue * 255.0).rounded()) & 0xFF
+        let a = Int((alpha * 255.0).rounded()) & 0xFF
+        
+        return UInt32((r << 24) | (g << 16) | (b << 8) | a)
     }
 }
 #elseif os(macOS)
@@ -578,6 +645,8 @@ extension CGColor: Colorful {
     public var hex: String {
         return hexFromSRGBComponents(of: self)
     }
+    
+    public var uint32: UInt32 { UIColor(cgColor: self).uint32 }
 }
 
 #if os(macOS)
@@ -592,12 +661,16 @@ extension CIColor: Colorful {
     public var uiColor: UIColor { UIColor(ciColor: self) }
     
     public var hex: String { self.uiColor.hex }
+    
+    public var uint32: UInt32 { self.uiColor.uint32 }
     #elseif os(macOS)
     public var color: Color { Color(nsColor: self.nsColor) }
     
     public var nsColor: NSColor { NSColor(ciColor: self) }
     
     public var hex: String { self.nsColor.hex }
+    
+    public var uint32: UInt32 { self.nsColor.uint32 }
     #endif
 }
 
