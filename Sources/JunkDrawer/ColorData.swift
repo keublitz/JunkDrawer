@@ -127,14 +127,14 @@ public struct ColorData: Codable, Equatable {
             guard r >= 0 && r <= 255,
                   g >= 0 && g <= 255,
                   b >= 0 && b <= 255,
-                  alpha >= 0 && alpha <= 1 else {
+                  alpha >= 0 && alpha <= 255 else {
                 logger.fatalError("Value overflow, all values encoded in hexadecimal must be between 0 and 255. (r: \(r), g: \(g), b: \(b), alpha: \(alpha))")
             }
             
             let floatR = CGFloat(Int(r) / 255)
             let floatG = CGFloat(Int(g) / 255)
             let floatB = CGFloat(Int(b) / 255)
-            let floatA = CGFloat(alpha)
+            let floatA = CGFloat(Int(alpha) / 255)
             
             uiColor = NativeColor(red: floatR, green: floatG, blue: floatB, alpha: floatA)
         }
