@@ -40,7 +40,8 @@ public typealias PlatformColor = NSColor
 /// * Initialize with a hex code:
 ///
 /// ```swift
-/// ColorData(hex: "#ABC123")
+/// ColorData(hex: "#ABC123") // String, returns optional
+/// ColorData(hex: 0xABC123)  // UInt32, returns normally
 /// ```
 ///
 /// * Use the static `.of` function:
@@ -69,7 +70,7 @@ public typealias PlatformColor = NSColor
 ///
 /// ```swift
 /// ColorData(encoder: .float, r: 1, g: 0.5, b: 0.25)
-/// ColorData(encoder: .hex, r: 255, g: 128, b: 64)
+/// ColorData(encoder: .rgb, r: 255, g: 128, b: 64)
 /// ```
 ///
 /// Alpha values are also encoded into `ColorData` and decoded into all usable color classes, so even colors with opacity modifiers can be encoded as is.
@@ -223,7 +224,7 @@ public struct ColorData: Codable, Equatable {
     public init(hex: String) {
         guard let color = Color(hex: hex) else {
             logger.error("Hex code \(hex) could not be decoded - returning empty ColorData.")
-            self.hex = String()
+            self.hex = "null"
             self.r = 0
             self.g = 0
             self.b = 0
