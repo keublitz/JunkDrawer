@@ -123,7 +123,7 @@ public struct ColorData: Codable, Equatable {
             }
             
             uiColor = NativeColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: CGFloat(alpha))
-        case .hexadecimal:
+        case .rgb:
             guard r >= 0 && r <= 255,
                   g >= 0 && g <= 255,
                   b >= 0 && b <= 255,
@@ -235,8 +235,8 @@ public struct ColorData: Codable, Equatable {
 
 /// The type of value to use for encoding color.
 public enum ValueEncoder {
-    /// Encoding color with hexadecimal values between 0 and 255.
-    case hexadecimal
+    /// Encoding color with RGB values between 0 and 255.
+    case rgb
     /// Encoding color with floating point values between 0.0 and 1.0.
     case float
 }
